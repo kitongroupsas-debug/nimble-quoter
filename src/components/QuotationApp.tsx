@@ -19,6 +19,7 @@ export interface Company {
   city: string;
   phone: string;
   email: string;
+  primaryColor: string;
 }
 
 export interface Customer {
@@ -57,7 +58,8 @@ const QuotationApp = () => {
     address: 'Dirección de la empresa',
     city: '',
     phone: '+57 000 000 0000',
-    email: 'contacto@miempresa.com'
+    email: 'contacto@miempresa.com',
+    primaryColor: '#2563eb'
   });
   
   const [customer, setCustomer] = useState<Customer>({

@@ -152,6 +152,28 @@ const CompanySettings: React.FC<CompanySettingsProps> = ({ company, setCompany }
           />
         </div>
       </div>
+
+      {/* Primary Color */}
+      <div className="space-y-2">
+        <Label htmlFor="primary-color" className="text-sm font-medium">
+          Color Principal de la Marca
+        </Label>
+        <div className="flex items-center gap-4">
+          <Input
+            id="primary-color"
+            type="color"
+            value={company.primaryColor}
+            onChange={(e) => setCompany({ ...company, primaryColor: e.target.value })}
+            className="w-16 h-10 p-1 rounded border cursor-pointer"
+          />
+          <Input
+            value={company.primaryColor}
+            onChange={(e) => setCompany({ ...company, primaryColor: e.target.value })}
+            placeholder="#2563eb"
+            className="flex-1"
+          />
+        </div>
+      </div>
     </div>
   );
 };

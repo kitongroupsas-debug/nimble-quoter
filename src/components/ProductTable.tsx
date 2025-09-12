@@ -162,7 +162,7 @@ const ProductTable: React.FC<ProductTableProps> = ({
                     min="1"
                     value={product.quantity}
                     onChange={(e) => updateProduct(product.id, 'quantity', parseInt(e.target.value) || 1)}
-                    className="w-full"
+                    className="w-full [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [-moz-appearance:textfield]"
                   />
                 </TableCell>
                 <TableCell>
@@ -191,7 +191,7 @@ const ProductTable: React.FC<ProductTableProps> = ({
                     step="0.01"
                     value={product.iva}
                     onChange={(e) => updateProduct(product.id, 'iva', parseFloat(e.target.value) || 0)}
-                    className="w-full"
+                    className="w-full [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [-moz-appearance:textfield]"
                   />
                 </TableCell>
                 <TableCell className="font-medium">

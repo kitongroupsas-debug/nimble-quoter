@@ -36,11 +36,16 @@ const QuotationPreview: React.FC<QuotationPreviewProps> = ({
   };
 
   const containerClass = isPrint 
-    ? "bg-white p-8 font-sans text-black min-h-screen" 
+    ? "bg-white p-8 font-sans text-black min-h-screen print-container" 
     : "bg-white p-8 rounded-lg shadow-lg";
 
+  const primaryColor = company.primaryColor || '#2563eb';
+
   return (
-    <div className={containerClass}>
+    <div className={containerClass} style={{ 
+      '--primary-color': primaryColor,
+      '--primary-color-rgb': primaryColor.replace('#', '').match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join(', ') || '37, 99, 235'
+    } as React.CSSProperties}>
       {/* Header */}
       <div className="flex justify-between items-start mb-8 pb-6 border-b-2 border-gray-200">
         <div className="flex items-center gap-4">
@@ -66,7 +71,7 @@ const QuotationPreview: React.FC<QuotationPreviewProps> = ({
         </div>
         
         <div className="text-right">
-          <h2 className="text-2xl font-bold text-blue-600 mb-2">COTIZACIÓN</h2>
+          <h2 className="text-2xl font-bold mb-2" style={{ color: primaryColor }}>COTIZACIÓN</h2>
           <div className="space-y-1 text-sm">
             <p><span className="font-semibold">No:</span> {quotationNumber}</p>
             <p className="flex items-center gap-1">
@@ -96,7 +101,7 @@ const QuotationPreview: React.FC<QuotationPreviewProps> = ({
         <div className="overflow-x-auto">
           <table className="w-full border-collapse border border-gray-300">
             <thead>
-              <tr className="bg-blue-50">
+              <tr style={{ backgroundColor: `${primaryColor}15` }}>
                 <th className="border border-gray-300 px-3 py-2 text-left text-sm font-semibold">ITEM</th>
                 <th className="border border-gray-300 px-3 py-2 text-left text-sm font-semibold">DESCRIPCIÓN</th>
                 <th className="border border-gray-300 px-3 py-2 text-center text-sm font-semibold">CANT.</th>
@@ -162,9 +167,9 @@ const QuotationPreview: React.FC<QuotationPreviewProps> = ({
                 <td className="border border-gray-300 px-4 py-2 font-semibold bg-gray-50">IVA:</td>
                 <td className="border border-gray-300 px-4 py-2 text-right">{formatCurrency(totals.totalIva)}</td>
               </tr>
-              <tr className="bg-blue-50">
+              <tr style={{ backgroundColor: `${primaryColor}15` }}>
                 <td className="border border-gray-300 px-4 py-3 font-bold text-lg">TOTAL:</td>
-                <td className="border border-gray-300 px-4 py-3 text-right font-bold text-lg text-blue-600">
+                <td className="border border-gray-300 px-4 py-3 text-right font-bold text-lg" style={{ color: primaryColor }}>
                   {formatCurrency(totals.total)}
                 </td>
               </tr>
@@ -178,19 +183,19 @@ const QuotationPreview: React.FC<QuotationPreviewProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm text-gray-700 mb-4">
           {company.phone && (
             <div className="flex items-center gap-2">
-              <Phone className="w-4 h-4 text-blue-500" />
+              <Phone className="w-4 h-4" style={{ color: primaryColor }} />
               <span>{company.phone}</span>
             </div>
           )}
           {company.email && (
             <div className="flex items-center gap-2">
-              <Mail className="w-4 h-4 text-blue-500" />
+              <Mail className="w-4 h-4" style={{ color: primaryColor }} />
               <span className="break-all">{company.email}</span>
             </div>
           )}
           {company.address && (
             <div className="flex items-center gap-2">
-              <MapPin className="w-4 h-4 text-blue-500" />
+              <MapPin className="w-4 h-4" style={{ color: primaryColor }} />
               <span>{company.address}</span>
             </div>
           )}
