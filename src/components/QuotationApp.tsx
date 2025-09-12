@@ -14,7 +14,9 @@ import { useToast } from '@/hooks/use-toast';
 export interface Company {
   name: string;
   logo: string;
+  nit: string;
   address: string;
+  city: string;
   phone: string;
   email: string;
 }
@@ -51,7 +53,9 @@ const QuotationApp = () => {
   const [company, setCompany] = useState<Company>({
     name: 'Mi Empresa',
     logo: '',
+    nit: '',
     address: 'Dirección de la empresa',
+    city: '',
     phone: '+57 000 000 0000',
     email: 'contacto@miempresa.com'
   });

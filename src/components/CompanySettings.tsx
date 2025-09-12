@@ -80,6 +80,20 @@ const CompanySettings: React.FC<CompanySettingsProps> = ({ company, setCompany }
         />
       </div>
 
+      {/* NIT */}
+      <div className="space-y-2">
+        <Label htmlFor="nit" className="text-sm font-medium">
+          NIT
+        </Label>
+        <Input
+          id="nit"
+          value={company.nit}
+          onChange={(e) => setCompany({ ...company, nit: e.target.value })}
+          placeholder="000.000.000-0"
+          className="w-full"
+        />
+      </div>
+
       {/* Address */}
       <div className="space-y-2">
         <Label htmlFor="address" className="text-sm font-medium">
@@ -92,6 +106,20 @@ const CompanySettings: React.FC<CompanySettingsProps> = ({ company, setCompany }
           placeholder="Dirección completa de la empresa"
           rows={2}
           className="w-full resize-none"
+        />
+      </div>
+
+      {/* Address and City */}
+      <div className="space-y-2">
+        <Label htmlFor="city" className="text-sm font-medium">
+          Ciudad
+        </Label>
+        <Input
+          id="city"
+          value={company.city}
+          onChange={(e) => setCompany({ ...company, city: e.target.value })}
+          placeholder="Ciudad"
+          className="w-full"
         />
       </div>
 

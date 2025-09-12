@@ -57,10 +57,9 @@ const QuotationPreview: React.FC<QuotationPreviewProps> = ({
           )}
           <div>
             <h1 className="text-3xl font-bold text-gray-800">{company.name}</h1>
-            {company.address && (
-              <p className="text-gray-600 mt-1 flex items-center gap-1">
-                <MapPin className="w-4 h-4" />
-                {company.address}
+            {company.nit && (
+              <p className="text-gray-600 mt-1 text-sm">
+                <span className="font-semibold">NIT:</span> {company.nit}
               </p>
             )}
           </div>
@@ -78,37 +77,16 @@ const QuotationPreview: React.FC<QuotationPreviewProps> = ({
         </div>
       </div>
 
-      {/* Company Contact Info */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-        <div>
-          <h3 className="text-lg font-semibold text-gray-800 mb-3">Información de Contacto</h3>
-          <div className="space-y-2 text-sm">
-            {company.phone && (
-              <p className="flex items-center gap-2">
-                <Phone className="w-4 h-4 text-blue-500" />
-                {company.phone}
-              </p>
-            )}
-            {company.email && (
-              <p className="flex items-center gap-2">
-                <Mail className="w-4 h-4 text-blue-500" />
-                {company.email}
-              </p>
-            )}
-          </div>
-        </div>
-
-        {/* Customer Info */}
-        <div>
-          <h3 className="text-lg font-semibold text-gray-800 mb-3">Datos del Cliente</h3>
-          <div className="space-y-1 text-sm">
-            <p><span className="font-semibold">Cliente:</span> {customer.name || 'N/A'}</p>
-            {customer.company && <p><span className="font-semibold">Empresa:</span> {customer.company}</p>}
-            <p><span className="font-semibold">Documento:</span> {customer.document || 'N/A'}</p>
-            <p><span className="font-semibold">Email:</span> {customer.email || 'N/A'}</p>
-            <p><span className="font-semibold">Teléfono:</span> {customer.phone || 'N/A'}</p>
-            {customer.address && <p><span className="font-semibold">Dirección:</span> {customer.address}</p>}
-          </div>
+      {/* Customer Info */}
+      <div className="mb-8">
+        <h3 className="text-lg font-semibold text-gray-800 mb-3">Datos del Cliente</h3>
+        <div className="space-y-1 text-sm">
+          <p><span className="font-semibold">Cliente:</span> {customer.name || 'N/A'}</p>
+          {customer.company && <p><span className="font-semibold">Empresa:</span> {customer.company}</p>}
+          <p><span className="font-semibold">Documento:</span> {customer.document || 'N/A'}</p>
+          <p><span className="font-semibold">Email:</span> {customer.email || 'N/A'}</p>
+          <p><span className="font-semibold">Teléfono:</span> {customer.phone || 'N/A'}</p>
+          {customer.address && <p><span className="font-semibold">Dirección:</span> {customer.address}</p>}
         </div>
       </div>
 
@@ -133,8 +111,8 @@ const QuotationPreview: React.FC<QuotationPreviewProps> = ({
                 <tr key={product.id} className="hover:bg-gray-50">
                   <td className="border border-gray-300 px-3 py-2 text-center text-sm">{product.item}</td>
                   <td className="border border-gray-300 px-3 py-2 text-sm">
-                    <div>
-                      {product.description || 'Sin descripción'}
+                    <div className="max-w-[250px]">
+                      <div className="break-words">{product.description || 'Sin descripción'}</div>
                       {product.image && (
                         <div className="mt-2">
                           <img 
@@ -195,10 +173,38 @@ const QuotationPreview: React.FC<QuotationPreviewProps> = ({
         </div>
       </div>
 
-      {/* Footer */}
-      <div className="mt-12 pt-6 border-t border-gray-200 text-center text-sm text-gray-600">
-        <p>Esta cotización es válida por 30 días a partir de la fecha de emisión.</p>
-        <p className="mt-2">Gracias por su confianza en nuestros servicios.</p>
+      {/* Footer with Company Contact */}
+      <div className="mt-12 pt-6 border-t border-gray-200">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm text-gray-700 mb-4">
+          {company.phone && (
+            <div className="flex items-center gap-2">
+              <Phone className="w-4 h-4 text-blue-500" />
+              <span>{company.phone}</span>
+            </div>
+          )}
+          {company.email && (
+            <div className="flex items-center gap-2">
+              <Mail className="w-4 h-4 text-blue-500" />
+              <span className="break-all">{company.email}</span>
+            </div>
+          )}
+          {company.address && (
+            <div className="flex items-center gap-2">
+              <MapPin className="w-4 h-4 text-blue-500" />
+              <span>{company.address}</span>
+            </div>
+          )}
+          {company.city && (
+            <div className="text-center md:text-right">
+              <span className="font-semibold">{company.city}</span>
+            </div>
+          )}
+        </div>
+        
+        <div className="text-center text-sm text-gray-600 border-t pt-4">
+          <p>Esta cotización es válida por 30 días a partir de la fecha de emisión.</p>
+          <p className="mt-2">Gracias por su confianza en nuestros servicios.</p>
+        </div>
       </div>
     </div>
   );
