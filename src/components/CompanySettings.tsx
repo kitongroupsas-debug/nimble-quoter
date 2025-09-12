@@ -1,0 +1,131 @@
+import React from 'react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import { Upload, Building2 } from 'lucide-react';
+import { Company } from './QuotationApp';
+
+interface CompanySettingsProps {
+  company: Company;
+  setCompany: (company: Company) => void;
+}
+
+const CompanySettings: React.FC<CompanySettingsProps> = ({ company, setCompany }) => {
+  const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setCompany({ ...company, logo: e.target?.result as string });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      {/* Logo Upload */}
+      <div className="space-y-2">
+        <Label htmlFor="logo" className="text-sm font-medium">
+          Logo de la Empresa
+        </Label>
+        <div className="flex items-center gap-4">
+          {company.logo ? (
+            <div className="w-20 h-20 rounded-lg overflow-hidden bg-muted border-2 border-border">
+              <img 
+                src={company.logo} 
+                alt="Logo" 
+                className="w-full h-full object-contain"
+              />
+            </div>
+          ) : (
+            <div className="w-20 h-20 rounded-lg bg-muted border-2 border-dashed border-border flex items-center justify-center">
+              <Building2 className="w-8 h-8 text-muted-foreground" />
+            </div>
+          )}
+          <div>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="cursor-pointer"
+              onClick={() => document.getElementById('logo-upload')?.click()}
+            >
+              <Upload className="w-4 h-4 mr-2" />
+              Subir Logo
+            </Button>
+            <input
+              id="logo-upload"
+              type="file"
+              accept="image/*"
+              onChange={handleLogoUpload}
+              className="hidden"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Company Name */}
+      <div className="space-y-2">
+        <Label htmlFor="company-name" className="text-sm font-medium">
+          Nombre de la Empresa *
+        </Label>
+        <Input
+          id="company-name"
+          value={company.name}
+          onChange={(e) => setCompany({ ...company, name: e.target.value })}
+          placeholder="Ingrese el nombre de su empresa"
+          className="w-full"
+        />
+      </div>
+
+      {/* Address */}
+      <div className="space-y-2">
+        <Label htmlFor="address" className="text-sm font-medium">
+          Dirección
+        </Label>
+        <Textarea
+          id="address"
+          value={company.address}
+          onChange={(e) => setCompany({ ...company, address: e.target.value })}
+          placeholder="Dirección completa de la empresa"
+          rows={2}
+          className="w-full resize-none"
+        />
+      </div>
+
+      {/* Contact Info */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="phone" className="text-sm font-medium">
+            Teléfono
+          </Label>
+          <Input
+            id="phone"
+            value={company.phone}
+            onChange={(e) => setCompany({ ...company, phone: e.target.value })}
+            placeholder="+57 000 000 0000"
+            className="w-full"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="email" className="text-sm font-medium">
+            Email
+          </Label>
+          <Input
+            id="email"
+            type="email"
+            value={company.email}
+            onChange={(e) => setCompany({ ...company, email: e.target.value })}
+            placeholder="contacto@empresa.com"
+            className="w-full"
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default CompanySettings;

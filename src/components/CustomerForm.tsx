@@ -1,0 +1,105 @@
+import React from 'react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Customer } from './QuotationApp';
+
+interface CustomerFormProps {
+  customer: Customer;
+  setCustomer: (customer: Customer) => void;
+}
+
+const CustomerForm: React.FC<CustomerFormProps> = ({ customer, setCustomer }) => {
+  return (
+    <div className="space-y-4">
+      {/* Customer Name */}
+      <div className="space-y-2">
+        <Label htmlFor="customer-name" className="text-sm font-medium">
+          Nombre del Cliente *
+        </Label>
+        <Input
+          id="customer-name"
+          value={customer.name}
+          onChange={(e) => setCustomer({ ...customer, name: e.target.value })}
+          placeholder="Nombre completo del cliente"
+          className="w-full"
+        />
+      </div>
+
+      {/* Customer Company */}
+      <div className="space-y-2">
+        <Label htmlFor="customer-company" className="text-sm font-medium">
+          Empresa del Cliente
+        </Label>
+        <Input
+          id="customer-company"
+          value={customer.company}
+          onChange={(e) => setCustomer({ ...customer, company: e.target.value })}
+          placeholder="Nombre de la empresa del cliente"
+          className="w-full"
+        />
+      </div>
+
+      {/* Document */}
+      <div className="space-y-2">
+        <Label htmlFor="document" className="text-sm font-medium">
+          NIT / Cédula *
+        </Label>
+        <Input
+          id="document"
+          value={customer.document}
+          onChange={(e) => setCustomer({ ...customer, document: e.target.value })}
+          placeholder="Número de identificación"
+          className="w-full"
+        />
+      </div>
+
+      {/* Contact Info */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="customer-email" className="text-sm font-medium">
+            Correo Electrónico *
+          </Label>
+          <Input
+            id="customer-email"
+            type="email"
+            value={customer.email}
+            onChange={(e) => setCustomer({ ...customer, email: e.target.value })}
+            placeholder="cliente@email.com"
+            className="w-full"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="customer-phone" className="text-sm font-medium">
+            Teléfono *
+          </Label>
+          <Input
+            id="customer-phone"
+            value={customer.phone}
+            onChange={(e) => setCustomer({ ...customer, phone: e.target.value })}
+            placeholder="+57 000 000 0000"
+            className="w-full"
+          />
+        </div>
+      </div>
+
+      {/* Address */}
+      <div className="space-y-2">
+        <Label htmlFor="customer-address" className="text-sm font-medium">
+          Dirección
+        </Label>
+        <Textarea
+          id="customer-address"
+          value={customer.address}
+          onChange={(e) => setCustomer({ ...customer, address: e.target.value })}
+          placeholder="Dirección completa del cliente"
+          rows={2}
+          className="w-full resize-none"
+        />
+      </div>
+    </div>
+  );
+};
+
+export default CustomerForm;
