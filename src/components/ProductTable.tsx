@@ -133,7 +133,7 @@ const ProductTable: React.FC<ProductTableProps> = ({
               <TableHead className="w-16">ITEM</TableHead>
               <TableHead className="min-w-48">DESCRIPCIÓN</TableHead>
               <TableHead className="w-20">CANT.</TableHead>
-              <TableHead className="w-32">TIEMPO ENTREGA</TableHead>
+              <TableHead className="w-32">DISPONIBILIDAD</TableHead>
               <TableHead className="w-32">PRECIO UNIT.</TableHead>
               <TableHead className="w-20">IVA %</TableHead>
               <TableHead className="w-32">SUBTOTAL</TableHead>
@@ -169,7 +169,7 @@ const ProductTable: React.FC<ProductTableProps> = ({
                   <Input
                     value={product.deliveryTime}
                     onChange={(e) => updateProduct(product.id, 'deliveryTime', e.target.value)}
-                    placeholder="Ej: 5-7 días"
+                    placeholder="Ej: Inmediata, 5-7 días"
                     className="w-full"
                   />
                 </TableCell>

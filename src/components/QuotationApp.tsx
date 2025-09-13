@@ -4,11 +4,14 @@ import { v4 as uuidv4 } from 'uuid';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Label } from '@/components/ui/label';
 import { Printer, Eye, Settings } from 'lucide-react';
 import CompanySettings from './CompanySettings';
 import CustomerForm from './CustomerForm';
 import ProductTable from './ProductTable';
 import QuotationPreview from './QuotationPreview';
+import QuotationFormats from './QuotationFormats';
 import { useToast } from '@/hooks/use-toast';
 
 export interface Company {
@@ -50,6 +53,7 @@ const QuotationApp = () => {
   const [quotationNumber, setQuotationNumber] = useState(uuidv4().slice(0, 8).toUpperCase());
   const [quotationDate] = useState(new Date().toLocaleDateString('es-CO'));
   const [observations, setObservations] = useState('');
+  const [selectedFormat, setSelectedFormat] = useState<'standard' | 'compact' | 'detailed'>('standard');
   
   const [company, setCompany] = useState<Company>({
     name: 'Mi Empresa',
@@ -163,7 +167,22 @@ const QuotationApp = () => {
           <TabsContent value="preview">
             <Card className="shadow-lg">
               <CardContent className="p-6">
-                <QuotationPreview
+                <div className="mb-6">
+                  <Label htmlFor="format-select" className="text-sm font-medium">
+                    Formato de Cotización
+                  </Label>
+                  <Select value={selectedFormat} onValueChange={(value: 'standard' | 'compact' | 'detailed') => setSelectedFormat(value)}>
+                    <SelectTrigger className="w-full max-w-xs mt-2">
+                      <SelectValue placeholder="Seleccionar formato" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="standard">Formato Estándar</SelectItem>
+                      <SelectItem value="compact">Formato Compacto</SelectItem>
+                      <SelectItem value="detailed">Formato Detallado</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <QuotationFormats
                   company={company}
                   customer={customer}
                   products={products}
@@ -171,26 +190,43 @@ const QuotationApp = () => {
                   quotationDate={quotationDate}
                   observations={observations}
                   totals={calculateTotals()}
+                  format={selectedFormat}
                 />
               </CardContent>
             </Card>
           </TabsContent>
 
           <TabsContent value="print" className="space-y-6">
-            <div className="text-center">
+            <div className="text-center space-y-4">
+              <div className="max-w-xs mx-auto">
+                <Label htmlFor="print-format-select" className="text-sm font-medium">
+                  Formato para Imprimir
+                </Label>
+                <Select value={selectedFormat} onValueChange={(value: 'standard' | 'compact' | 'detailed') => setSelectedFormat(value)}>
+                  <SelectTrigger className="w-full mt-2">
+                    <SelectValue placeholder="Seleccionar formato" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="standard">Formato Estándar</SelectItem>
+                    <SelectItem value="compact">Formato Compacto</SelectItem>
+                    <SelectItem value="detailed">Formato Detallado</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
               <Button 
                 onClick={handlePrint}
                 size="lg"
                 className="bg-gradient-primary hover:opacity-90 shadow-lg"
               >
                 <Printer className="w-5 h-5 mr-2" />
-                Descargar PDF
+                Descargar PDF ({selectedFormat === 'standard' ? 'Estándar' : selectedFormat === 'compact' ? 'Compacto' : 'Detallado'})
               </Button>
             </div>
             
             <div style={{ display: 'none' }}>
               <div ref={printRef}>
-                <QuotationPreview
+                <QuotationFormats
                   company={company}
                   customer={customer}
                   products={products}
@@ -198,6 +234,7 @@ const QuotationApp = () => {
                   quotationDate={quotationDate}
                   observations={observations}
                   totals={calculateTotals()}
+                  format={selectedFormat}
                   isPrint={true}
                 />
               </div>

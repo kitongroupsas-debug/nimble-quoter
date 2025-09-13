@@ -105,7 +105,7 @@ const QuotationPreview: React.FC<QuotationPreviewProps> = ({
                 <th className="border border-gray-300 px-3 py-2 text-left text-sm font-semibold">ITEM</th>
                 <th className="border border-gray-300 px-3 py-2 text-left text-sm font-semibold">DESCRIPCIÓN</th>
                 <th className="border border-gray-300 px-3 py-2 text-center text-sm font-semibold">CANT.</th>
-                <th className="border border-gray-300 px-3 py-2 text-center text-sm font-semibold">TIEMPO</th>
+                <th className="border border-gray-300 px-3 py-2 text-center text-sm font-semibold">DISPONIBILIDAD</th>
                 <th className="border border-gray-300 px-3 py-2 text-right text-sm font-semibold">PRECIO UNIT.</th>
                 <th className="border border-gray-300 px-3 py-2 text-center text-sm font-semibold">IVA %</th>
                 <th className="border border-gray-300 px-3 py-2 text-right text-sm font-semibold">SUBTOTAL</th>
@@ -123,7 +123,8 @@ const QuotationPreview: React.FC<QuotationPreviewProps> = ({
                           <img 
                             src={product.image} 
                             alt="Producto" 
-                            className="w-16 h-16 object-cover rounded border"
+                            className="w-20 h-20 object-contain rounded border bg-white"
+                            style={{ maxWidth: '80px', maxHeight: '80px' }}
                           />
                         </div>
                       )}
