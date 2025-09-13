@@ -101,15 +101,16 @@ const QuotationPreview: React.FC<QuotationPreviewProps> = ({
         <div className="overflow-x-auto">
           <table className="w-full border-collapse border border-gray-300">
             <thead>
-              <tr style={{ backgroundColor: `${primaryColor}15` }}>
-                <th className="border border-gray-300 px-3 py-2 text-left text-sm font-semibold">ITEM</th>
-                <th className="border border-gray-300 px-3 py-2 text-left text-sm font-semibold">DESCRIPCIÓN</th>
-                <th className="border border-gray-300 px-3 py-2 text-center text-sm font-semibold">CANT.</th>
-                <th className="border border-gray-300 px-3 py-2 text-center text-sm font-semibold">DISPONIBILIDAD</th>
-                <th className="border border-gray-300 px-3 py-2 text-right text-sm font-semibold">PRECIO UNIT.</th>
-                <th className="border border-gray-300 px-3 py-2 text-center text-sm font-semibold">IVA %</th>
-                <th className="border border-gray-300 px-3 py-2 text-right text-sm font-semibold">SUBTOTAL</th>
-              </tr>
+                <tr style={{ backgroundColor: `${primaryColor}15` }}>
+                  <th className="border border-gray-300 px-3 py-2 text-left text-sm font-semibold">ITEM</th>
+                  <th className="border border-gray-300 px-3 py-2 text-left text-sm font-semibold">DESCRIPCIÓN</th>
+                  <th className="border border-gray-300 px-3 py-2 text-center text-sm font-semibold">CANT.</th>
+                  <th className="border border-gray-300 px-3 py-2 text-center text-sm font-semibold">DISPONIBILIDAD</th>
+                  <th className="border border-gray-300 px-3 py-2 text-center text-sm font-semibold">GARANTÍA</th>
+                  <th className="border border-gray-300 px-3 py-2 text-right text-sm font-semibold">PRECIO UNIT.</th>
+                  <th className="border border-gray-300 px-3 py-2 text-center text-sm font-semibold">IVA %</th>
+                  <th className="border border-gray-300 px-3 py-2 text-right text-sm font-semibold">SUBTOTAL</th>
+                </tr>
             </thead>
             <tbody>
               {products.map((product) => (
@@ -132,6 +133,7 @@ const QuotationPreview: React.FC<QuotationPreviewProps> = ({
                   </td>
                   <td className="border border-gray-300 px-3 py-2 text-center text-sm">{product.quantity}</td>
                   <td className="border border-gray-300 px-3 py-2 text-center text-sm">{product.deliveryTime || '-'}</td>
+                  <td className="border border-gray-300 px-3 py-2 text-center text-sm">{product.warranty ? `${product.warranty} meses` : '-'}</td>
                   <td className="border border-gray-300 px-3 py-2 text-right text-sm">{formatCurrency(product.unitPrice)}</td>
                   <td className="border border-gray-300 px-3 py-2 text-center text-sm">{product.iva}%</td>
                   <td className="border border-gray-300 px-3 py-2 text-right text-sm font-semibold">{formatCurrency(product.subtotal)}</td>

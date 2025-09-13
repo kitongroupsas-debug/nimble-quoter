@@ -34,6 +34,7 @@ const ProductTable: React.FC<ProductTableProps> = ({
       description: '',
       quantity: 1,
       deliveryTime: '',
+      warranty: 0,
       unitPrice: 0,
       iva: 19,
       subtotal: 0
@@ -134,6 +135,7 @@ const ProductTable: React.FC<ProductTableProps> = ({
               <TableHead className="min-w-48">DESCRIPCIÓN</TableHead>
               <TableHead className="w-20">CANT.</TableHead>
               <TableHead className="w-32">DISPONIBILIDAD</TableHead>
+              <TableHead className="w-28">GARANTÍA (MESES)</TableHead>
               <TableHead className="w-32">PRECIO UNIT.</TableHead>
               <TableHead className="w-20">IVA %</TableHead>
               <TableHead className="w-32">SUBTOTAL</TableHead>
@@ -171,6 +173,16 @@ const ProductTable: React.FC<ProductTableProps> = ({
                     onChange={(e) => updateProduct(product.id, 'deliveryTime', e.target.value)}
                     placeholder="Ej: Inmediata, 5-7 días"
                     className="w-full"
+                  />
+                </TableCell>
+                <TableCell>
+                  <Input
+                    type="number"
+                    min="0"
+                    value={product.warranty}
+                    onChange={(e) => updateProduct(product.id, 'warranty', parseInt(e.target.value) || 0)}
+                    placeholder="Meses"
+                    className="w-full [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [-moz-appearance:textfield]"
                   />
                 </TableCell>
                 <TableCell>

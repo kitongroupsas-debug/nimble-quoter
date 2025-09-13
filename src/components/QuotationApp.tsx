@@ -40,6 +40,7 @@ export interface Product {
   description: string;
   quantity: number;
   deliveryTime: string;
+  warranty: number;
   unitPrice: number;
   iva: number;
   subtotal: number;
@@ -82,6 +83,7 @@ const QuotationApp = () => {
       description: '',
       quantity: 1,
       deliveryTime: '',
+      warranty: 0,
       unitPrice: 0,
       iva: 19,
       subtotal: 0
