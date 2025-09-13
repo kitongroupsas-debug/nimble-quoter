@@ -56,14 +56,14 @@ const QuotationApp = () => {
   const [selectedFormat, setSelectedFormat] = useState<'standard' | 'compact' | 'detailed'>('standard');
   
   const [company, setCompany] = useState<Company>({
-    name: 'Mi Empresa',
-    logo: '',
-    nit: '',
-    address: 'Dirección de la empresa',
-    city: '',
-    phone: '+57 000 000 0000',
-    email: 'contacto@miempresa.com',
-    primaryColor: '#2563eb'
+    name: 'KITON GROUP SAS',
+    logo: '/src/assets/kiton-logo.png',
+    nit: '901.275.858-0',
+    address: 'CLL 2A 24 33',
+    city: 'BOGOTA, COLOMBIA',
+    phone: '316 6221750',
+    email: 'comercial@kitongroup.com',
+    primaryColor: '#ff8000'
   });
   
   const [customer, setCustomer] = useState<Customer>({
