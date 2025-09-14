@@ -1,15 +1,54 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Customer } from './QuotationApp';
+import { Button } from '@/components/ui/button';
+import { Save } from 'lucide-react';
+import { Customer } from '@/hooks/useSupabaseData';
+import { useToast } from '@/hooks/use-toast';
 
 interface CustomerFormProps {
   customer: Customer;
   setCustomer: (customer: Customer) => void;
+  onSave: (customer: Customer) => Promise<Customer | null>;
+  loading: boolean;
 }
 
-const CustomerForm: React.FC<CustomerFormProps> = ({ customer, setCustomer }) => {
+const CustomerForm: React.FC<CustomerFormProps> = ({ customer, setCustomer, onSave, loading }) => {
+  const [saving, setSaving] = useState(false);
+  const { toast } = useToast();
+
+  const handleSaveCustomer = async () => {
+    if (!customer.name || !customer.email) {
+      toast({
+        title: "Error",
+        description: "El nombre y email del cliente son requeridos.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const savedCustomer = await onSave(customer);
+      if (savedCustomer) {
+        setCustomer(savedCustomer);
+        toast({
+          title: "Cliente guardado",
+          description: "Los datos del cliente se han guardado correctamente.",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "No se pudo guardar el cliente. Inténtalo de nuevo.",
+        variant: "destructive",
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <div className="space-y-4">
       {/* Customer Name */}
@@ -97,6 +136,18 @@ const CustomerForm: React.FC<CustomerFormProps> = ({ customer, setCustomer }) =>
           rows={2}
           className="w-full resize-none"
         />
+      </div>
+
+      {/* Save Button */}
+      <div className="pt-4 border-t">
+        <Button 
+          onClick={handleSaveCustomer}
+          disabled={saving || loading || !customer.name || !customer.email}
+          className="w-full"
+        >
+          <Save className="w-4 h-4 mr-2" />
+          {saving ? "Guardando..." : "Guardar Cliente"}
+        </Button>
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -6,7 +6,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Plus, Trash2, Upload, Calendar } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
-import { Product } from './QuotationApp';
+import { Product } from '@/hooks/useSupabaseData';
+import { useToast } from '@/hooks/use-toast';
 
 interface ProductTableProps {
   products: Product[];
@@ -16,6 +17,7 @@ interface ProductTableProps {
   quotationDate: string;
   observations: string;
   setObservations: (observations: string) => void;
+  uploadImage: (file: File, folder?: string) => Promise<string | null>;
 }
 
 const ProductTable: React.FC<ProductTableProps> = ({
@@ -25,19 +27,22 @@ const ProductTable: React.FC<ProductTableProps> = ({
   setQuotationNumber,
   quotationDate,
   observations,
-  setObservations
+  setObservations,
+  uploadImage
 }) => {
+  const [uploadingImages, setUploadingImages] = useState<Set<string>>(new Set());
+  const { toast } = useToast();
   const addProduct = () => {
     const newProduct: Product = {
       id: uuidv4(),
-      item: products.length + 1,
+      item_number: (products.length + 1).toString(),
       description: '',
       quantity: 1,
-      deliveryTime: '',
-      warranty: 0,
-      unitPrice: 0,
-      iva: 19,
-      subtotal: 0
+      unit_price: 0,
+      subtotal: 0,
+      iva_percentage: 19,
+      iva_amount: 0,
+      total: 0
     };
     setProducts([...products, newProduct]);
   };
@@ -47,7 +52,7 @@ const ProductTable: React.FC<ProductTableProps> = ({
     // Reorder items
     const reorderedProducts = updatedProducts.map((product, index) => ({
       ...product,
-      item: index + 1
+      item_number: (index + 1).toString()
     }));
     setProducts(reorderedProducts);
   };
@@ -57,9 +62,17 @@ const ProductTable: React.FC<ProductTableProps> = ({
       if (product.id === id) {
         const updatedProduct = { ...product, [field]: value };
         
-        // Recalculate subtotal when quantity or unitPrice changes
-        if (field === 'quantity' || field === 'unitPrice') {
-          updatedProduct.subtotal = updatedProduct.quantity * updatedProduct.unitPrice;
+        // Recalculate subtotal and totals when quantity or unit_price changes
+        if (field === 'quantity' || field === 'unit_price') {
+          updatedProduct.subtotal = updatedProduct.quantity * updatedProduct.unit_price;
+          updatedProduct.iva_amount = updatedProduct.subtotal * (updatedProduct.iva_percentage / 100);
+          updatedProduct.total = updatedProduct.subtotal + updatedProduct.iva_amount;
+        }
+        
+        // Recalculate when IVA percentage changes
+        if (field === 'iva_percentage') {
+          updatedProduct.iva_amount = updatedProduct.subtotal * (updatedProduct.iva_percentage / 100);
+          updatedProduct.total = updatedProduct.subtotal + updatedProduct.iva_amount;
         }
         
         return updatedProduct;
@@ -69,14 +82,32 @@ const ProductTable: React.FC<ProductTableProps> = ({
     setProducts(updatedProducts);
   };
 
-  const handleImageUpload = (productId: string, event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (productId: string, event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        updateProduct(productId, 'image', e.target?.result as string);
-      };
-      reader.readAsDataURL(file);
+      setUploadingImages(prev => new Set(prev).add(productId));
+      try {
+        const imageUrl = await uploadImage(file, 'products');
+        if (imageUrl) {
+          updateProduct(productId, 'image_url', imageUrl);
+          toast({
+            title: "Imagen subida",
+            description: "La imagen del producto se ha subido correctamente.",
+          });
+        }
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "No se pudo subir la imagen. Inténtalo de nuevo.",
+          variant: "destructive",
+        });
+      } finally {
+        setUploadingImages(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(productId);
+          return newSet;
+        });
+      }
     }
   };
 
@@ -90,7 +121,7 @@ const ProductTable: React.FC<ProductTableProps> = ({
 
   const calculateTotals = () => {
     const subtotal = products.reduce((sum, product) => sum + product.subtotal, 0);
-    const totalIva = products.reduce((sum, product) => sum + (product.subtotal * product.iva / 100), 0);
+    const totalIva = products.reduce((sum, product) => sum + product.iva_amount, 0);
     const total = subtotal + totalIva;
     
     return { subtotal, totalIva, total };
@@ -134,11 +165,10 @@ const ProductTable: React.FC<ProductTableProps> = ({
               <TableHead className="w-16">ITEM</TableHead>
               <TableHead className="min-w-48">DESCRIPCIÓN</TableHead>
               <TableHead className="w-20">CANT.</TableHead>
-              <TableHead className="w-32">DISPONIBILIDAD</TableHead>
-              <TableHead className="w-28">GARANTÍA (MESES)</TableHead>
               <TableHead className="w-32">PRECIO UNIT.</TableHead>
               <TableHead className="w-20">IVA %</TableHead>
               <TableHead className="w-32">SUBTOTAL</TableHead>
+              <TableHead className="w-32">TOTAL</TableHead>
               <TableHead className="w-20">IMAGEN</TableHead>
               <TableHead className="w-16">ACCIÓN</TableHead>
             </TableRow>
@@ -147,7 +177,7 @@ const ProductTable: React.FC<ProductTableProps> = ({
             {products.map((product) => (
               <TableRow key={product.id} className="border-b">
                 <TableCell className="text-center font-medium">
-                  {product.item}
+                  {product.item_number}
                 </TableCell>
                 <TableCell>
                   <Textarea
@@ -169,29 +199,11 @@ const ProductTable: React.FC<ProductTableProps> = ({
                 </TableCell>
                 <TableCell>
                   <Input
-                    value={product.deliveryTime}
-                    onChange={(e) => updateProduct(product.id, 'deliveryTime', e.target.value)}
-                    placeholder="Ej: Inmediata, 5-7 días"
-                    className="w-full"
-                  />
-                </TableCell>
-                <TableCell>
-                  <Input
-                    type="number"
-                    min="0"
-                    value={product.warranty}
-                    onChange={(e) => updateProduct(product.id, 'warranty', parseInt(e.target.value) || 0)}
-                    placeholder="Meses"
-                    className="w-full [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [-moz-appearance:textfield]"
-                  />
-                </TableCell>
-                <TableCell>
-                  <Input
                     type="number"
                     min="0"
                     step="0.01"
-                    value={product.unitPrice}
-                    onChange={(e) => updateProduct(product.id, 'unitPrice', parseFloat(e.target.value) || 0)}
+                    value={product.unit_price}
+                    onChange={(e) => updateProduct(product.id, 'unit_price', parseFloat(e.target.value) || 0)}
                     className="w-full"
                   />
                 </TableCell>
@@ -201,19 +213,22 @@ const ProductTable: React.FC<ProductTableProps> = ({
                     min="0"
                     max="100"
                     step="0.01"
-                    value={product.iva}
-                    onChange={(e) => updateProduct(product.id, 'iva', parseFloat(e.target.value) || 0)}
+                    value={product.iva_percentage}
+                    onChange={(e) => updateProduct(product.id, 'iva_percentage', parseFloat(e.target.value) || 0)}
                     className="w-full [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [-moz-appearance:textfield]"
                   />
                 </TableCell>
                 <TableCell className="font-medium">
                   {formatCurrency(product.subtotal)}
                 </TableCell>
+                <TableCell className="font-medium">
+                  {formatCurrency(product.total)}
+                </TableCell>
                 <TableCell>
                   <div className="flex flex-col items-center gap-2">
-                    {product.image && (
+                    {product.image_url && (
                       <img 
-                        src={product.image} 
+                        src={product.image_url} 
                         alt="Producto" 
                         className="w-12 h-12 object-cover rounded border"
                       />
@@ -223,6 +238,7 @@ const ProductTable: React.FC<ProductTableProps> = ({
                       variant="outline"
                       size="sm"
                       onClick={() => document.getElementById(`image-${product.id}`)?.click()}
+                      disabled={uploadingImages.has(product.id)}
                     >
                       <Upload className="w-3 h-3" />
                     </Button>

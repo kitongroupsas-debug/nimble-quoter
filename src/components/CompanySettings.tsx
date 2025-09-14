@@ -1,25 +1,84 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { Upload, Building2 } from 'lucide-react';
-import { Company } from './QuotationApp';
+import { Upload, Building2, Save } from 'lucide-react';
+import { Company } from '@/hooks/useSupabaseData';
+import { useToast } from '@/hooks/use-toast';
 
 interface CompanySettingsProps {
   company: Company;
   setCompany: (company: Company) => void;
+  onSave: (company: Company) => Promise<Company | null>;
+  uploadImage: (file: File, folder?: string) => Promise<string | null>;
+  loading: boolean;
 }
 
-const CompanySettings: React.FC<CompanySettingsProps> = ({ company, setCompany }) => {
-  const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+const CompanySettings: React.FC<CompanySettingsProps> = ({ 
+  company, 
+  setCompany, 
+  onSave, 
+  uploadImage, 
+  loading 
+}) => {
+  const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const { toast } = useToast();
+
+  const handleLogoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setCompany({ ...company, logo: e.target?.result as string });
-      };
-      reader.readAsDataURL(file);
+      setUploading(true);
+      try {
+        const logoUrl = await uploadImage(file, 'logos');
+        if (logoUrl) {
+          setCompany({ ...company, logo_url: logoUrl });
+          toast({
+            title: "Logo subido",
+            description: "El logo se ha subido correctamente.",
+          });
+        }
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "No se pudo subir el logo. Inténtalo de nuevo.",
+          variant: "destructive",
+        });
+      } finally {
+        setUploading(false);
+      }
+    }
+  };
+
+  const handleSaveCompany = async () => {
+    if (!company.name) {
+      toast({
+        title: "Error",
+        description: "El nombre de la empresa es requerido.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const savedCompany = await onSave(company);
+      if (savedCompany) {
+        setCompany(savedCompany);
+        toast({
+          title: "Empresa guardada",
+          description: "Los datos de la empresa se han guardado correctamente.",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "No se pudo guardar la empresa. Inténtalo de nuevo.",
+        variant: "destructive",
+      });
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -31,10 +90,10 @@ const CompanySettings: React.FC<CompanySettingsProps> = ({ company, setCompany }
           Logo de la Empresa
         </Label>
         <div className="flex items-center gap-4">
-          {company.logo ? (
+          {company.logo_url ? (
             <div className="w-20 h-20 rounded-lg overflow-hidden bg-muted border-2 border-border">
               <img 
-                src={company.logo} 
+                src={company.logo_url} 
                 alt="Logo" 
                 className="w-full h-full object-contain"
               />
@@ -51,9 +110,10 @@ const CompanySettings: React.FC<CompanySettingsProps> = ({ company, setCompany }
               size="sm"
               className="cursor-pointer"
               onClick={() => document.getElementById('logo-upload')?.click()}
+              disabled={uploading}
             >
               <Upload className="w-4 h-4 mr-2" />
-              Subir Logo
+              {uploading ? "Subiendo..." : "Subir Logo"}
             </Button>
             <input
               id="logo-upload"
@@ -162,17 +222,29 @@ const CompanySettings: React.FC<CompanySettingsProps> = ({ company, setCompany }
           <Input
             id="primary-color"
             type="color"
-            value={company.primaryColor}
-            onChange={(e) => setCompany({ ...company, primaryColor: e.target.value })}
+            value={company.primary_color || '#3B82F6'}
+            onChange={(e) => setCompany({ ...company, primary_color: e.target.value })}
             className="w-16 h-10 p-1 rounded border cursor-pointer"
           />
           <Input
-            value={company.primaryColor}
-            onChange={(e) => setCompany({ ...company, primaryColor: e.target.value })}
-            placeholder="#2563eb"
+            value={company.primary_color || '#3B82F6'}
+            onChange={(e) => setCompany({ ...company, primary_color: e.target.value })}
+            placeholder="#3B82F6"
             className="flex-1"
           />
         </div>
+      </div>
+
+      {/* Save Button */}
+      <div className="pt-4 border-t">
+        <Button 
+          onClick={handleSaveCompany}
+          disabled={saving || loading || !company.name}
+          className="w-full"
+        >
+          <Save className="w-4 h-4 mr-2" />
+          {saving ? "Guardando..." : "Guardar Empresa"}
+        </Button>
       </div>
     </div>
   );

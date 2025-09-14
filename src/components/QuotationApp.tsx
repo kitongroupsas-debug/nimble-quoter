@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useReactToPrint } from 'react-to-print';
 import { v4 as uuidv4 } from 'uuid';
 import { Card, CardContent } from '@/components/ui/card';
@@ -6,65 +6,44 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
-import { Printer, Eye, Settings } from 'lucide-react';
+import { Printer, Eye, Settings, Save } from 'lucide-react';
 import CompanySettings from './CompanySettings';
 import CustomerForm from './CustomerForm';
 import ProductTable from './ProductTable';
 import QuotationPreview from './QuotationPreview';
 import QuotationFormats from './QuotationFormats';
 import { useToast } from '@/hooks/use-toast';
+import { useSupabaseData, Company, Customer, Product, Quotation } from '@/hooks/useSupabaseData';
 
-export interface Company {
-  name: string;
-  logo: string;
-  nit: string;
-  address: string;
-  city: string;
-  phone: string;
-  email: string;
-  primaryColor: string;
-}
-
-export interface Customer {
-  name: string;
-  company: string;
-  document: string;
-  email: string;
-  phone: string;
-  address: string;
-}
-
-export interface Product {
-  id: string;
-  item: number;
-  description: string;
-  quantity: number;
-  deliveryTime: string;
-  warranty: number;
-  unitPrice: number;
-  iva: number;
-  subtotal: number;
-  image?: string;
-}
+// Interfaces are now imported from useSupabaseData hook
 
 const QuotationApp = () => {
   const { toast } = useToast();
   const printRef = useRef<HTMLDivElement>(null);
+  const { 
+    loading, 
+    defaultCompany, 
+    saveCompany, 
+    saveCustomer, 
+    saveQuotation, 
+    uploadImage 
+  } = useSupabaseData();
   
   const [quotationNumber, setQuotationNumber] = useState(uuidv4().slice(0, 8).toUpperCase());
   const [quotationDate] = useState(new Date().toLocaleDateString('es-CO'));
   const [observations, setObservations] = useState('');
   const [selectedFormat, setSelectedFormat] = useState<'standard' | 'compact' | 'detailed'>('standard');
+  const [saving, setSaving] = useState(false);
   
   const [company, setCompany] = useState<Company>({
-    name: 'KITON GROUP SAS',
-    logo: '/src/assets/kiton-logo.png',
-    nit: '901.275.858-0',
-    address: 'CLL 2A 24 33',
-    city: 'BOGOTA, COLOMBIA',
-    phone: '316 6221750',
-    email: 'comercial@kitongroup.com',
-    primaryColor: '#ff8000'
+    name: '',
+    logo_url: '',
+    nit: '',
+    address: '',
+    city: '',
+    phone: '',
+    email: '',
+    primary_color: '#3B82F6'
   });
   
   const [customer, setCustomer] = useState<Customer>({
@@ -79,16 +58,23 @@ const QuotationApp = () => {
   const [products, setProducts] = useState<Product[]>([
     {
       id: uuidv4(),
-      item: 1,
+      item_number: '1',
       description: '',
       quantity: 1,
-      deliveryTime: '',
-      warranty: 0,
-      unitPrice: 0,
-      iva: 19,
-      subtotal: 0
+      unit_price: 0,
+      subtotal: 0,
+      iva_percentage: 19,
+      iva_amount: 0,
+      total: 0
     }
   ]);
+
+  // Load default company data when available
+  useEffect(() => {
+    if (defaultCompany) {
+      setCompany(defaultCompany);
+    }
+  }, [defaultCompany]);
 
   const handlePrint = useReactToPrint({
     contentRef: printRef,
@@ -103,10 +89,66 @@ const QuotationApp = () => {
 
   const calculateTotals = () => {
     const subtotal = products.reduce((sum, product) => sum + product.subtotal, 0);
-    const totalIva = products.reduce((sum, product) => sum + (product.subtotal * product.iva / 100), 0);
+    const totalIva = products.reduce((sum, product) => sum + product.iva_amount, 0);
     const total = subtotal + totalIva;
     
     return { subtotal, totalIva, total };
+  };
+
+  const handleSaveQuotation = async () => {
+    setSaving(true);
+    try {
+      // Save company if it has changes
+      let companyId = company.id;
+      if (!companyId || company.name) {
+        const savedCompany = await saveCompany(company);
+        if (savedCompany) {
+          companyId = savedCompany.id;
+          setCompany(savedCompany);
+        }
+      }
+
+      // Save customer if it has data
+      let customerId;
+      if (customer.name || customer.email) {
+        const savedCustomer = await saveCustomer(customer);
+        if (savedCustomer) {
+          customerId = savedCustomer.id;
+          setCustomer(savedCustomer);
+        }
+      }
+
+      // Prepare quotation data
+      const totals = calculateTotals();
+      const quotationData: Quotation = {
+        quotation_number: quotationNumber,
+        company_id: companyId,
+        customer_id: customerId,
+        quotation_date: new Date().toISOString().split('T')[0],
+        observations,
+        format: selectedFormat,
+        subtotal: totals.subtotal,
+        total_iva: totals.totalIva,
+        total: totals.total,
+        status: 'draft'
+      };
+
+      // Save quotation with products
+      await saveQuotation(quotationData, products);
+      
+      toast({
+        title: "Cotización guardada",
+        description: "La cotización se ha guardado correctamente en la base de datos.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "No se pudo guardar la cotización. Inténtalo de nuevo.",
+        variant: "destructive",
+      });
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -115,6 +157,18 @@ const QuotationApp = () => {
         <div className="mb-8 text-center">
           <h1 className="text-4xl font-bold text-primary mb-2">Sistema de Cotizaciones</h1>
           <p className="text-muted-foreground text-lg">Gestiona tus cotizaciones de manera profesional</p>
+        </div>
+
+        <div className="flex justify-center mb-6">
+          <Button 
+            onClick={handleSaveQuotation}
+            disabled={saving || loading}
+            size="lg"
+            className="bg-green-600 hover:bg-green-700 text-white shadow-lg"
+          >
+            <Save className="w-5 h-5 mr-2" />
+            {saving ? "Guardando..." : "Guardar Cotización"}
+          </Button>
         </div>
 
         <Tabs defaultValue="create" className="space-y-6">
@@ -135,19 +189,30 @@ const QuotationApp = () => {
 
           <TabsContent value="create" className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card className="shadow-lg">
-                <CardContent className="p-6">
-                  <h2 className="text-2xl font-semibold text-primary mb-4">Configuración de Empresa</h2>
-                  <CompanySettings company={company} setCompany={setCompany} />
-                </CardContent>
-              </Card>
+                <Card className="shadow-lg">
+                  <CardContent className="p-6">
+                    <h2 className="text-2xl font-semibold text-primary mb-4">Configuración de Empresa</h2>
+                    <CompanySettings 
+                      company={company} 
+                      setCompany={setCompany} 
+                      onSave={saveCompany}
+                      uploadImage={uploadImage}
+                      loading={loading}
+                    />
+                  </CardContent>
+                </Card>
 
-              <Card className="shadow-lg">
-                <CardContent className="p-6">
-                  <h2 className="text-2xl font-semibold text-primary mb-4">Datos del Cliente</h2>
-                  <CustomerForm customer={customer} setCustomer={setCustomer} />
-                </CardContent>
-              </Card>
+                <Card className="shadow-lg">
+                  <CardContent className="p-6">
+                    <h2 className="text-2xl font-semibold text-primary mb-4">Datos del Cliente</h2>
+                    <CustomerForm 
+                      customer={customer} 
+                      setCustomer={setCustomer}
+                      onSave={saveCustomer}
+                      loading={loading}
+                    />
+                  </CardContent>
+                </Card>
             </div>
 
             <Card className="shadow-lg">
@@ -161,6 +226,7 @@ const QuotationApp = () => {
                   quotationDate={quotationDate}
                   observations={observations}
                   setObservations={setObservations}
+                  uploadImage={uploadImage}
                 />
               </CardContent>
             </Card>

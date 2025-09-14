@@ -1,6 +1,6 @@
 import React from 'react';
 import { Building2, Mail, Phone, MapPin, Calendar, FileText } from 'lucide-react';
-import { Company, Customer, Product } from './QuotationApp';
+import { Company, Customer, Product } from '@/hooks/useSupabaseData';
 
 interface QuotationPreviewProps {
   company: Company;
