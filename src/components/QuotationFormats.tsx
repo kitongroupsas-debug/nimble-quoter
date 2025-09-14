@@ -41,7 +41,7 @@ const QuotationFormats: React.FC<QuotationFormatProps> = ({
     ? "bg-white p-8 font-sans text-black min-h-screen print-container" 
     : "bg-white p-8 rounded-lg shadow-lg";
 
-  const primaryColor = company.primaryColor || '#2563eb';
+  const primaryColor = company.primary_color || '#2563eb';
 
   // Standard Format (existing format)
   if (format === 'standard') {
@@ -53,9 +53,9 @@ const QuotationFormats: React.FC<QuotationFormatProps> = ({
         {/* Header */}
         <div className="flex justify-between items-start mb-8 pb-6 border-b-2 border-gray-200">
           <div className="flex items-center gap-4">
-            {company.logo ? (
+            {company.logo_url ? (
               <img 
-                src={company.logo} 
+                src={company.logo_url} 
                 alt="Logo" 
                 className="w-20 h-20 object-contain"
               />
@@ -109,8 +109,6 @@ const QuotationFormats: React.FC<QuotationFormatProps> = ({
                   <th className="border border-gray-300 px-3 py-2 text-left text-sm font-semibold">ITEM</th>
                   <th className="border border-gray-300 px-3 py-2 text-left text-sm font-semibold">DESCRIPCIÓN</th>
                   <th className="border border-gray-300 px-3 py-2 text-center text-sm font-semibold">CANT.</th>
-                  <th className="border border-gray-300 px-3 py-2 text-center text-sm font-semibold">DISPONIBILIDAD</th>
-                  <th className="border border-gray-300 px-3 py-2 text-center text-sm font-semibold">GARANTÍA</th>
                   <th className="border border-gray-300 px-3 py-2 text-right text-sm font-semibold">PRECIO UNIT.</th>
                   <th className="border border-gray-300 px-3 py-2 text-center text-sm font-semibold">IVA %</th>
                   <th className="border border-gray-300 px-3 py-2 text-right text-sm font-semibold">SUBTOTAL</th>
@@ -119,14 +117,14 @@ const QuotationFormats: React.FC<QuotationFormatProps> = ({
               <tbody>
                 {products.map((product) => (
                   <tr key={product.id} className="hover:bg-gray-50">
-                    <td className="border border-gray-300 px-3 py-2 text-center text-sm">{product.item}</td>
+                    <td className="border border-gray-300 px-3 py-2 text-center text-sm">{product.item_number}</td>
                     <td className="border border-gray-300 px-3 py-2 text-sm">
                       <div className="max-w-[250px]">
                         <div className="break-words">{product.description || 'Sin descripción'}</div>
-                        {product.image && (
+                        {product.image_url && (
                           <div className="mt-2">
                             <img 
-                              src={product.image} 
+                              src={product.image_url} 
                               alt="Producto" 
                               className="w-20 h-20 object-contain rounded border bg-white"
                               style={{ maxWidth: '80px', maxHeight: '80px' }}
@@ -136,10 +134,8 @@ const QuotationFormats: React.FC<QuotationFormatProps> = ({
                       </div>
                     </td>
                     <td className="border border-gray-300 px-3 py-2 text-center text-sm">{product.quantity}</td>
-                    <td className="border border-gray-300 px-3 py-2 text-center text-sm">{product.deliveryTime || '-'}</td>
-                    <td className="border border-gray-300 px-3 py-2 text-center text-sm">{product.warranty ? `${product.warranty} meses` : '-'}</td>
-                    <td className="border border-gray-300 px-3 py-2 text-right text-sm">{formatCurrency(product.unitPrice)}</td>
-                    <td className="border border-gray-300 px-3 py-2 text-center text-sm">{product.iva}%</td>
+                    <td className="border border-gray-300 px-3 py-2 text-right text-sm">{formatCurrency(product.unit_price)}</td>
+                    <td className="border border-gray-300 px-3 py-2 text-center text-sm">{product.iva_percentage}%</td>
                     <td className="border border-gray-300 px-3 py-2 text-right text-sm font-semibold">{formatCurrency(product.subtotal)}</td>
                   </tr>
                 ))}
@@ -232,9 +228,9 @@ const QuotationFormats: React.FC<QuotationFormatProps> = ({
         {/* Compact Header */}
         <div className="text-center mb-6 pb-4 border-b-2" style={{ borderColor: primaryColor }}>
           <div className="flex justify-center items-center gap-4 mb-4">
-            {company.logo && (
+            {company.logo_url && (
               <img 
-                src={company.logo} 
+                src={company.logo_url} 
                 alt="Logo" 
                 className="w-16 h-16 object-contain"
               />
@@ -280,22 +276,18 @@ const QuotationFormats: React.FC<QuotationFormatProps> = ({
           {products.map((product) => (
             <div key={product.id} className="border-b border-gray-200 py-3 grid grid-cols-1 md:grid-cols-7 gap-4 items-start">
               <div className="md:col-span-3">
-                <p className="font-medium text-sm">{product.item}. {product.description}</p>
-                {product.image && (
+                <p className="font-medium text-sm">{product.item_number}. {product.description}</p>
+                {product.image_url && (
                   <img 
-                    src={product.image} 
+                    src={product.image_url} 
                     alt="Producto" 
                     className="w-16 h-16 object-contain rounded border bg-white mt-2"
                   />
                 )}
               </div>
               <div className="text-sm">Cant: {product.quantity}</div>
-              <div className="text-sm">
-                {product.deliveryTime && `Disp: ${product.deliveryTime}`}
-              </div>
-              <div className="text-sm">
-                {product.warranty ? `Garantía: ${product.warranty} meses` : 'Sin garantía'}
-              </div>
+              <div className="text-sm"></div>
+              <div className="text-sm"></div>
               <div className="text-sm font-medium text-right">
                 {formatCurrency(product.subtotal)}
               </div>
@@ -327,9 +319,9 @@ const QuotationFormats: React.FC<QuotationFormatProps> = ({
         <div className="mb-8">
           <div className="flex justify-between items-start mb-6 pb-6 border-b-2 border-gray-200">
             <div className="flex items-center gap-4">
-              {company.logo ? (
+              {company.logo_url ? (
                 <img 
-                  src={company.logo} 
+                  src={company.logo_url} 
                   alt="Logo" 
                   className="w-24 h-24 object-contain"
                 />
@@ -402,16 +394,16 @@ const QuotationFormats: React.FC<QuotationFormatProps> = ({
               <tbody>
                 {products.map((product, index) => (
                   <tr key={product.id} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
-                    <td className="border border-gray-300 px-4 py-3 text-center font-medium">{product.item}</td>
+                    <td className="border border-gray-300 px-4 py-3 text-center font-medium">{product.item_number}</td>
                     <td className="border border-gray-300 px-4 py-3">
                       <div className="max-w-[300px]">
                         <div className="break-words text-sm leading-relaxed">
                           {product.description || 'Sin descripción'}
                         </div>
-                        {product.image && (
+                        {product.image_url && (
                           <div className="mt-3">
                             <img 
-                              src={product.image} 
+                              src={product.image_url} 
                               alt="Producto" 
                               className="w-24 h-24 object-contain rounded border bg-white shadow-sm"
                               style={{ maxWidth: '96px', maxHeight: '96px' }}
@@ -421,10 +413,8 @@ const QuotationFormats: React.FC<QuotationFormatProps> = ({
                       </div>
                     </td>
                     <td className="border border-gray-300 px-4 py-3 text-center font-medium">{product.quantity}</td>
-                    <td className="border border-gray-300 px-4 py-3 text-center">{product.deliveryTime || 'No especificado'}</td>
-                    <td className="border border-gray-300 px-4 py-3 text-center">{product.warranty ? `${product.warranty} meses` : 'Sin garantía'}</td>
-                    <td className="border border-gray-300 px-4 py-3 text-right font-medium">{formatCurrency(product.unitPrice)}</td>
-                    <td className="border border-gray-300 px-4 py-3 text-center">{product.iva}%</td>
+                    <td className="border border-gray-300 px-4 py-3 text-right font-medium">{formatCurrency(product.unit_price)}</td>
+                    <td className="border border-gray-300 px-4 py-3 text-center">{product.iva_percentage}%</td>
                     <td className="border border-gray-300 px-4 py-3 text-right font-bold text-lg">{formatCurrency(product.subtotal)}</td>
                   </tr>
                 ))}

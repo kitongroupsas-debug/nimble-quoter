@@ -39,7 +39,7 @@ const QuotationPreview: React.FC<QuotationPreviewProps> = ({
     ? "bg-white p-8 font-sans text-black min-h-screen print-container" 
     : "bg-white p-8 rounded-lg shadow-lg";
 
-  const primaryColor = company.primaryColor || '#2563eb';
+  const primaryColor = company.primary_color || '#2563eb';
 
   return (
     <div className={containerClass} style={{ 
@@ -49,9 +49,9 @@ const QuotationPreview: React.FC<QuotationPreviewProps> = ({
       {/* Header */}
       <div className="flex justify-between items-start mb-8 pb-6 border-b-2 border-gray-200">
         <div className="flex items-center gap-4">
-          {company.logo ? (
+          {company.logo_url ? (
             <img 
-              src={company.logo} 
+              src={company.logo_url} 
               alt="Logo" 
               className="w-20 h-20 object-contain"
             />
@@ -105,8 +105,6 @@ const QuotationPreview: React.FC<QuotationPreviewProps> = ({
                   <th className="border border-gray-300 px-3 py-2 text-left text-sm font-semibold">ITEM</th>
                   <th className="border border-gray-300 px-3 py-2 text-left text-sm font-semibold">DESCRIPCIÓN</th>
                   <th className="border border-gray-300 px-3 py-2 text-center text-sm font-semibold">CANT.</th>
-                  <th className="border border-gray-300 px-3 py-2 text-center text-sm font-semibold">DISPONIBILIDAD</th>
-                  <th className="border border-gray-300 px-3 py-2 text-center text-sm font-semibold">GARANTÍA</th>
                   <th className="border border-gray-300 px-3 py-2 text-right text-sm font-semibold">PRECIO UNIT.</th>
                   <th className="border border-gray-300 px-3 py-2 text-center text-sm font-semibold">IVA %</th>
                   <th className="border border-gray-300 px-3 py-2 text-right text-sm font-semibold">SUBTOTAL</th>
@@ -115,14 +113,14 @@ const QuotationPreview: React.FC<QuotationPreviewProps> = ({
             <tbody>
               {products.map((product) => (
                 <tr key={product.id} className="hover:bg-gray-50">
-                  <td className="border border-gray-300 px-3 py-2 text-center text-sm">{product.item}</td>
+                  <td className="border border-gray-300 px-3 py-2 text-center text-sm">{product.item_number}</td>
                   <td className="border border-gray-300 px-3 py-2 text-sm">
                     <div className="max-w-[250px]">
                       <div className="break-words">{product.description || 'Sin descripción'}</div>
-                      {product.image && (
+                      {product.image_url && (
                         <div className="mt-2">
                           <img 
-                            src={product.image} 
+                            src={product.image_url} 
                             alt="Producto" 
                             className="w-20 h-20 object-contain rounded border bg-white"
                             style={{ maxWidth: '80px', maxHeight: '80px' }}
@@ -132,10 +130,8 @@ const QuotationPreview: React.FC<QuotationPreviewProps> = ({
                     </div>
                   </td>
                   <td className="border border-gray-300 px-3 py-2 text-center text-sm">{product.quantity}</td>
-                  <td className="border border-gray-300 px-3 py-2 text-center text-sm">{product.deliveryTime || '-'}</td>
-                  <td className="border border-gray-300 px-3 py-2 text-center text-sm">{product.warranty ? `${product.warranty} meses` : '-'}</td>
-                  <td className="border border-gray-300 px-3 py-2 text-right text-sm">{formatCurrency(product.unitPrice)}</td>
-                  <td className="border border-gray-300 px-3 py-2 text-center text-sm">{product.iva}%</td>
+                  <td className="border border-gray-300 px-3 py-2 text-right text-sm">{formatCurrency(product.unit_price)}</td>
+                  <td className="border border-gray-300 px-3 py-2 text-center text-sm">{product.iva_percentage}%</td>
                   <td className="border border-gray-300 px-3 py-2 text-right text-sm font-semibold">{formatCurrency(product.subtotal)}</td>
                 </tr>
               ))}
