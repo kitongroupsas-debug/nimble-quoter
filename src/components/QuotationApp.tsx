@@ -68,7 +68,9 @@ const QuotationApp = () => {
       subtotal: 0,
       iva_percentage: 19,
       iva_amount: 0,
-      total: 0
+      total: 0,
+      availability: '',
+      warranty: ''
     }
   ]);
 

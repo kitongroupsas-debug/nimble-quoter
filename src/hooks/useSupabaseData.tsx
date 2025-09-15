@@ -27,6 +27,7 @@ export interface Customer {
 
 export interface Product {
   id?: string;
+  user_id?: string;
   quotation_id?: string;
   item_number?: string;
   description: string;
@@ -37,17 +38,6 @@ export interface Product {
   iva_percentage: number;
   iva_amount: number;
   total: number;
-  availability?: string;
-  warranty?: string;
-}
-
-export interface ProductCatalog {
-  id?: string;
-  user_id?: string;
-  item_number?: string;
-  description: string;
-  image_url?: string;
-  unit_price: number;
   availability?: string;
   warranty?: string;
 }
@@ -78,8 +68,8 @@ export const useSupabaseData = () => {
   // Customers
   const [customers, setCustomers] = useState<Customer[]>([]);
 
-  // Products Catalog
-  const [productsCatalog, setProductsCatalog] = useState<ProductCatalog[]>([]);
+  // Products Catalog (unified with quotation products)
+  const [productsCatalog, setProductsCatalog] = useState<Product[]>([]);
 
   // Quotations
   const [quotations, setQuotations] = useState<Quotation[]>([]);
@@ -240,14 +230,15 @@ export const useSupabaseData = () => {
     }
   };
 
-  // Products Catalog functions
+  // Products functions (unified catalog and quotation products)
   const loadProductsCatalog = async () => {
     if (!user) return;
     
     const { data, error } = await supabase
-      .from('products_catalog')
+      .from('products')
       .select('*')
       .eq('user_id', user.id)
+      .is('quotation_id', null) // Only catalog products (not linked to quotations)
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -261,17 +252,19 @@ export const useSupabaseData = () => {
     }
   };
 
-  const saveProductCatalog = async (product: ProductCatalog) => {
+  const saveProductCatalog = async (product: Product) => {
     if (!user) return null;
     
     const productData = {
       ...product,
       user_id: user.id,
+      quotation_id: null, // Catalog products don't have quotation_id
+      iva_percentage: product.iva_percentage || 19, // Default 19%
     };
 
     if (product.id) {
       const { data, error } = await supabase
-        .from('products_catalog')
+        .from('products')
         .update(productData)
         .eq('id', product.id)
         .eq('user_id', user.id)
@@ -291,7 +284,7 @@ export const useSupabaseData = () => {
       return data;
     } else {
       const { data, error } = await supabase
-        .from('products_catalog')
+        .from('products')
         .insert([productData])
         .select()
         .single();
@@ -379,9 +372,9 @@ export const useSupabaseData = () => {
 
     // Save products
     if (quotationResult?.id && products.length > 0) {
-      // Delete existing products
+      // Delete existing products for this quotation
       await supabase
-        .from('quotation_products')
+        .from('products')
         .delete()
         .eq('quotation_id', quotationResult.id);
 
@@ -389,10 +382,12 @@ export const useSupabaseData = () => {
       const productsData = products.map(product => ({
         ...product,
         quotation_id: quotationResult.id,
+        user_id: user.id,
+        iva_percentage: product.iva_percentage || 19, // Default 19%
       }));
 
       const { error: productsError } = await supabase
-        .from('quotation_products')
+        .from('products')
         .insert(productsData);
 
       if (productsError) {
@@ -410,7 +405,7 @@ export const useSupabaseData = () => {
 
   const loadQuotationProducts = async (quotationId: string) => {
     const { data, error } = await supabase
-      .from('quotation_products')
+      .from('products')
       .select('*')
       .eq('quotation_id', quotationId)
       .order('created_at', { ascending: true });

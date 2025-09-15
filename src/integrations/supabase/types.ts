@@ -98,7 +98,7 @@ export type Database = {
         }
         Relationships: []
       }
-      products_catalog: {
+      products: {
         Row: {
           availability: string | null
           created_at: string
@@ -106,6 +106,12 @@ export type Database = {
           id: string
           image_url: string | null
           item_number: string | null
+          iva_amount: number | null
+          iva_percentage: number
+          quantity: number | null
+          quotation_id: string | null
+          subtotal: number | null
+          total: number | null
           unit_price: number
           updated_at: string
           user_id: string
@@ -118,6 +124,12 @@ export type Database = {
           id?: string
           image_url?: string | null
           item_number?: string | null
+          iva_amount?: number | null
+          iva_percentage?: number
+          quantity?: number | null
+          quotation_id?: string | null
+          subtotal?: number | null
+          total?: number | null
           unit_price?: number
           updated_at?: string
           user_id: string
@@ -130,68 +142,20 @@ export type Database = {
           id?: string
           image_url?: string | null
           item_number?: string | null
+          iva_amount?: number | null
+          iva_percentage?: number
+          quantity?: number | null
+          quotation_id?: string | null
+          subtotal?: number | null
+          total?: number | null
           unit_price?: number
           updated_at?: string
           user_id?: string
           warranty?: string | null
         }
-        Relationships: []
-      }
-      quotation_products: {
-        Row: {
-          availability: string | null
-          created_at: string
-          description: string
-          id: string
-          image_url: string | null
-          item_number: string | null
-          iva_amount: number
-          iva_percentage: number
-          quantity: number
-          quotation_id: string
-          subtotal: number
-          total: number
-          unit_price: number
-          updated_at: string
-          warranty: string | null
-        }
-        Insert: {
-          availability?: string | null
-          created_at?: string
-          description: string
-          id?: string
-          image_url?: string | null
-          item_number?: string | null
-          iva_amount?: number
-          iva_percentage?: number
-          quantity?: number
-          quotation_id: string
-          subtotal?: number
-          total?: number
-          unit_price?: number
-          updated_at?: string
-          warranty?: string | null
-        }
-        Update: {
-          availability?: string | null
-          created_at?: string
-          description?: string
-          id?: string
-          image_url?: string | null
-          item_number?: string | null
-          iva_amount?: number
-          iva_percentage?: number
-          quantity?: number
-          quotation_id?: string
-          subtotal?: number
-          total?: number
-          unit_price?: number
-          updated_at?: string
-          warranty?: string | null
-        }
         Relationships: [
           {
-            foreignKeyName: "quotation_products_quotation_id_fkey"
+            foreignKeyName: "products_quotation_id_fkey"
             columns: ["quotation_id"]
             isOneToOne: false
             referencedRelation: "quotations"

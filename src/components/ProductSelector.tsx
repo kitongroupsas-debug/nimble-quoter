@@ -8,11 +8,11 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import { ProductCatalog } from "@/hooks/useSupabaseData";
+import { Product } from "@/hooks/useSupabaseData";
 
 interface ProductSelectorProps {
-  products: ProductCatalog[];
-  onProductSelect: (product: ProductCatalog) => void;
+  products: Product[];
+  onProductSelect: (product: Product) => void;
   onCreateNew: () => void;
 }
 

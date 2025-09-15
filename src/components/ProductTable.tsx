@@ -6,15 +6,15 @@ import { Textarea } from '@/components/ui/textarea';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Plus, Trash2, Upload, Calendar } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
-import { Product, ProductCatalog } from '@/hooks/useSupabaseData';
+import { Product } from '@/hooks/useSupabaseData';
 import { useToast } from '@/hooks/use-toast';
 import { ProductSelector } from './ProductSelector';
 
 interface ProductTableProps {
   products: Product[];
   setProducts: (products: Product[]) => void;
-  productsCatalog: ProductCatalog[];
-  saveProductCatalog: (product: ProductCatalog) => Promise<ProductCatalog | null>;
+  productsCatalog: Product[];
+  saveProductCatalog: (product: Product) => Promise<Product | null>;
   quotationNumber: string;
   setQuotationNumber: (number: string) => void;
   quotationDate: string;
@@ -179,9 +179,9 @@ const ProductTable: React.FC<ProductTableProps> = ({
               quantity: 1,
               unit_price: catalogProduct.unit_price,
               subtotal: catalogProduct.unit_price,
-              iva_percentage: 19,
-              iva_amount: catalogProduct.unit_price * 0.19,
-              total: catalogProduct.unit_price * 1.19,
+              iva_percentage: catalogProduct.iva_percentage || 19,
+              iva_amount: catalogProduct.unit_price * ((catalogProduct.iva_percentage || 19) / 100),
+              total: catalogProduct.unit_price * (1 + (catalogProduct.iva_percentage || 19) / 100),
               availability: catalogProduct.availability || '',
               warranty: catalogProduct.warranty || '',
               image_url: catalogProduct.image_url
@@ -190,9 +190,14 @@ const ProductTable: React.FC<ProductTableProps> = ({
           }}
           onCreateNew={async () => {
             // Create a product in the catalog first
-            const newCatalogProduct: ProductCatalog = {
+            const newCatalogProduct: Product = {
               description: 'Nuevo producto',
               unit_price: 0,
+              iva_percentage: 19,
+              quantity: 1,
+              subtotal: 0,
+              iva_amount: 0,
+              total: 0,
               availability: '',
               warranty: ''
             };
