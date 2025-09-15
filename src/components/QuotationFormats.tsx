@@ -349,7 +349,7 @@ const QuotationFormats: React.FC<QuotationFormatProps> = ({
             </div>
             
             <div className="text-right bg-gray-50 p-4 rounded-lg">
-              <h2 className="text-3xl font-bold mb-3" style={{ color: primaryColor }}>COTIZACIÓN DETALLADA</h2>
+              <h2 className="text-3xl font-bold mb-3" style={{ color: primaryColor }}>COTIZACIÓN</h2>
               <div className="space-y-2">
                 <p><span className="font-semibold">Número:</span> {quotationNumber}</p>
                 <p className="flex items-center gap-1">
