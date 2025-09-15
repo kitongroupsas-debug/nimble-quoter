@@ -271,7 +271,7 @@ const ProductTable: React.FC<ProductTableProps> = ({
                     step="0.01"
                     value={product.unit_price}
                     onChange={(e) => updateProduct(product.id, 'unit_price', parseFloat(e.target.value) || 0)}
-                    className="w-full"
+                    className="w-full [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [-moz-appearance:textfield]"
                   />
                 </TableCell>
                 <TableCell>
@@ -282,7 +282,7 @@ const ProductTable: React.FC<ProductTableProps> = ({
                     step="0.01"
                     value={product.iva_percentage}
                     onChange={(e) => updateProduct(product.id, 'iva_percentage', parseFloat(e.target.value) || 0)}
-                    className="w-full [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [-moz-appearance:textfield]"
+                    className="w-full text-center [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [-moz-appearance:textfield]"
                   />
                 </TableCell>
                 <TableCell className="font-medium">

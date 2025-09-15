@@ -109,7 +109,7 @@ const QuotationPreview: React.FC<QuotationPreviewProps> = ({
                   <th className="border border-gray-300 px-3 py-2 text-center text-sm font-semibold">CANT.</th>
                   <th className="border border-gray-300 px-3 py-2 text-right text-sm font-semibold">PRECIO UNIT.</th>
                   <th className="border border-gray-300 px-3 py-2 text-center text-sm font-semibold">IVA %</th>
-                  <th className="border border-gray-300 px-3 py-2 text-right text-sm font-semibold">SUBTOTAL</th>
+                  <th className="border border-gray-300 px-3 py-2 text-right text-sm font-semibold">TOTAL</th>
                 </tr>
             </thead>
             <tbody>
@@ -136,7 +136,7 @@ const QuotationPreview: React.FC<QuotationPreviewProps> = ({
                   <td className="border border-gray-300 px-3 py-2 text-center text-sm">{product.quantity}</td>
                   <td className="border border-gray-300 px-3 py-2 text-right text-sm">{formatCurrency(product.unit_price)}</td>
                   <td className="border border-gray-300 px-3 py-2 text-center text-sm">{product.iva_percentage}%</td>
-                  <td className="border border-gray-300 px-3 py-2 text-right text-sm font-semibold">{formatCurrency(product.subtotal)}</td>
+                  <td className="border border-gray-300 px-3 py-2 text-right text-sm font-semibold">{formatCurrency(product.total)}</td>
                 </tr>
               ))}
             </tbody>

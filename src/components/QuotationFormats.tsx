@@ -108,10 +108,12 @@ const QuotationFormats: React.FC<QuotationFormatProps> = ({
                 <tr style={{ backgroundColor: `${primaryColor}15` }}>
                   <th className="border border-gray-300 px-3 py-2 text-left text-sm font-semibold">ITEM</th>
                   <th className="border border-gray-300 px-3 py-2 text-left text-sm font-semibold">DESCRIPCIÓN</th>
+                  <th className="border border-gray-300 px-3 py-2 text-center text-sm font-semibold">DISPONIBILIDAD</th>
+                  <th className="border border-gray-300 px-3 py-2 text-center text-sm font-semibold">GARANTÍA</th>
                   <th className="border border-gray-300 px-3 py-2 text-center text-sm font-semibold">CANT.</th>
                   <th className="border border-gray-300 px-3 py-2 text-right text-sm font-semibold">PRECIO UNIT.</th>
                   <th className="border border-gray-300 px-3 py-2 text-center text-sm font-semibold">IVA %</th>
-                  <th className="border border-gray-300 px-3 py-2 text-right text-sm font-semibold">SUBTOTAL</th>
+                  <th className="border border-gray-300 px-3 py-2 text-right text-sm font-semibold">TOTAL</th>
                 </tr>
               </thead>
               <tbody>
@@ -133,10 +135,12 @@ const QuotationFormats: React.FC<QuotationFormatProps> = ({
                         )}
                       </div>
                     </td>
+                    <td className="border border-gray-300 px-3 py-2 text-center text-sm">{product.availability || 'Inmediata'}</td>
+                    <td className="border border-gray-300 px-3 py-2 text-center text-sm">{product.warranty || '1 año'}</td>
                     <td className="border border-gray-300 px-3 py-2 text-center text-sm">{product.quantity}</td>
                     <td className="border border-gray-300 px-3 py-2 text-right text-sm">{formatCurrency(product.unit_price)}</td>
                     <td className="border border-gray-300 px-3 py-2 text-center text-sm">{product.iva_percentage}%</td>
-                    <td className="border border-gray-300 px-3 py-2 text-right text-sm font-semibold">{formatCurrency(product.subtotal)}</td>
+                    <td className="border border-gray-300 px-3 py-2 text-right text-sm font-semibold">{formatCurrency(product.total)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -277,6 +281,10 @@ const QuotationFormats: React.FC<QuotationFormatProps> = ({
             <div key={product.id} className="border-b border-gray-200 py-3 grid grid-cols-1 md:grid-cols-7 gap-4 items-start">
               <div className="md:col-span-3">
                 <p className="font-medium text-sm">{product.item_number}. {product.description}</p>
+                <div className="text-xs text-gray-600 mt-1">
+                  <p>Disponibilidad: {product.availability || 'Inmediata'}</p>
+                  <p>Garantía: {product.warranty || '1 año'}</p>
+                </div>
                 {product.image_url && (
                   <img 
                     src={product.image_url} 
@@ -286,10 +294,10 @@ const QuotationFormats: React.FC<QuotationFormatProps> = ({
                 )}
               </div>
               <div className="text-sm">Cant: {product.quantity}</div>
-              <div className="text-sm"></div>
-              <div className="text-sm"></div>
+              <div className="text-sm">Precio: {formatCurrency(product.unit_price)}</div>
+              <div className="text-sm">IVA: {product.iva_percentage}%</div>
               <div className="text-sm font-medium text-right">
-                {formatCurrency(product.subtotal)}
+                {formatCurrency(product.total)}
               </div>
             </div>
           ))}
@@ -386,9 +394,11 @@ const QuotationFormats: React.FC<QuotationFormatProps> = ({
                   <th className="border border-gray-300 px-4 py-3 text-center font-semibold">CANTIDAD</th>
                   <th className="border border-gray-300 px-4 py-3 text-center font-semibold">DISPONIBILIDAD</th>
                   <th className="border border-gray-300 px-4 py-3 text-center font-semibold">GARANTÍA</th>
+                  <th className="border border-gray-300 px-4 py-3 text-center font-semibold">DISPONIBILIDAD</th>
+                  <th className="border border-gray-300 px-4 py-3 text-center font-semibold">GARANTÍA</th>
                   <th className="border border-gray-300 px-4 py-3 text-right font-semibold">PRECIO UNITARIO</th>
                   <th className="border border-gray-300 px-4 py-3 text-center font-semibold">IVA %</th>
-                  <th className="border border-gray-300 px-4 py-3 text-right font-semibold">SUBTOTAL</th>
+                  <th className="border border-gray-300 px-4 py-3 text-right font-semibold">TOTAL</th>
                 </tr>
               </thead>
               <tbody>
@@ -413,9 +423,11 @@ const QuotationFormats: React.FC<QuotationFormatProps> = ({
                       </div>
                     </td>
                     <td className="border border-gray-300 px-4 py-3 text-center font-medium">{product.quantity}</td>
+                    <td className="border border-gray-300 px-4 py-3 text-center text-sm">{product.availability || 'Inmediata'}</td>
+                    <td className="border border-gray-300 px-4 py-3 text-center text-sm">{product.warranty || '1 año'}</td>
                     <td className="border border-gray-300 px-4 py-3 text-right font-medium">{formatCurrency(product.unit_price)}</td>
                     <td className="border border-gray-300 px-4 py-3 text-center">{product.iva_percentage}%</td>
-                    <td className="border border-gray-300 px-4 py-3 text-right font-bold text-lg">{formatCurrency(product.subtotal)}</td>
+                    <td className="border border-gray-300 px-4 py-3 text-right font-bold text-lg">{formatCurrency(product.total)}</td>
                   </tr>
                 ))}
               </tbody>
