@@ -6,15 +6,17 @@ import { Button } from '@/components/ui/button';
 import { Save } from 'lucide-react';
 import { Customer } from '@/hooks/useSupabaseData';
 import { useToast } from '@/hooks/use-toast';
+import { CustomerSelector } from './CustomerSelector';
 
 interface CustomerFormProps {
   customer: Customer;
   setCustomer: (customer: Customer) => void;
   onSave: (customer: Customer) => Promise<Customer | null>;
+  customers: Customer[];
   loading: boolean;
 }
 
-const CustomerForm: React.FC<CustomerFormProps> = ({ customer, setCustomer, onSave, loading }) => {
+const CustomerForm: React.FC<CustomerFormProps> = ({ customer, setCustomer, onSave, customers, loading }) => {
   const [saving, setSaving] = useState(false);
   const { toast } = useToast();
 
@@ -49,8 +51,36 @@ const CustomerForm: React.FC<CustomerFormProps> = ({ customer, setCustomer, onSa
     }
   };
 
+  const handleCustomerSelect = (selectedCustomer: Customer) => {
+    setCustomer(selectedCustomer);
+  };
+
+  const handleCreateNew = () => {
+    setCustomer({
+      name: "",
+      company: "",
+      document: "",
+      email: "",
+      phone: "",
+      address: "",
+    });
+  };
+
   return (
     <div className="space-y-4">
+      {/* Customer Selector */}
+      <div className="space-y-2">
+        <Label className="text-sm font-medium">
+          Seleccionar Cliente
+        </Label>
+        <CustomerSelector
+          customers={customers}
+          selectedCustomer={customer}
+          onCustomerSelect={handleCustomerSelect}
+          onCreateNew={handleCreateNew}
+        />
+      </div>
+
       {/* Customer Name */}
       <div className="space-y-2">
         <Label htmlFor="customer-name" className="text-sm font-medium">

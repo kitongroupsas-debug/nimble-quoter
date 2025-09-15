@@ -22,9 +22,12 @@ const QuotationApp = () => {
   const printRef = useRef<HTMLDivElement>(null);
   const { 
     loading, 
+    customers,
+    productsCatalog,
     defaultCompany, 
     saveCompany, 
-    saveCustomer, 
+    saveCustomer,
+    saveProductCatalog,
     saveQuotation, 
     uploadImage 
   } = useSupabaseData();
@@ -205,12 +208,13 @@ const QuotationApp = () => {
                 <Card className="shadow-lg">
                   <CardContent className="p-6">
                     <h2 className="text-2xl font-semibold text-primary mb-4">Datos del Cliente</h2>
-                    <CustomerForm 
-                      customer={customer} 
-                      setCustomer={setCustomer}
-                      onSave={saveCustomer}
-                      loading={loading}
-                    />
+          <CustomerForm
+            customer={customer}
+            setCustomer={setCustomer}
+            onSave={saveCustomer}
+            customers={customers}
+            loading={loading}
+          />
                   </CardContent>
                 </Card>
             </div>
@@ -218,16 +222,18 @@ const QuotationApp = () => {
             <Card className="shadow-lg">
               <CardContent className="p-6">
                 <h2 className="text-2xl font-semibold text-primary mb-4">Productos y Servicios</h2>
-                <ProductTable 
-                  products={products} 
-                  setProducts={setProducts}
-                  quotationNumber={quotationNumber}
-                  setQuotationNumber={setQuotationNumber}
-                  quotationDate={quotationDate}
-                  observations={observations}
-                  setObservations={setObservations}
-                  uploadImage={uploadImage}
-                />
+            <ProductTable 
+              products={products} 
+              setProducts={setProducts}
+              productsCatalog={productsCatalog}
+              saveProductCatalog={saveProductCatalog}
+              quotationNumber={quotationNumber} 
+              setQuotationNumber={setQuotationNumber}
+              quotationDate={quotationDate}
+              observations={observations}
+              setObservations={setObservations}
+              uploadImage={uploadImage}
+            />
               </CardContent>
             </Card>
           </TabsContent>

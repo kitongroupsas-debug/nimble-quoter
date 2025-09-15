@@ -37,6 +37,19 @@ export interface Product {
   iva_percentage: number;
   iva_amount: number;
   total: number;
+  availability?: string;
+  warranty?: string;
+}
+
+export interface ProductCatalog {
+  id?: string;
+  user_id?: string;
+  item_number?: string;
+  description: string;
+  image_url?: string;
+  unit_price: number;
+  availability?: string;
+  warranty?: string;
 }
 
 export interface Quotation {
@@ -65,6 +78,9 @@ export const useSupabaseData = () => {
   // Customers
   const [customers, setCustomers] = useState<Customer[]>([]);
 
+  // Products Catalog
+  const [productsCatalog, setProductsCatalog] = useState<ProductCatalog[]>([]);
+
   // Quotations
   const [quotations, setQuotations] = useState<Quotation[]>([]);
 
@@ -73,6 +89,7 @@ export const useSupabaseData = () => {
     if (user) {
       loadCompanies();
       loadCustomers();
+      loadProductsCatalog();
       loadQuotations();
     }
   }, [user]);
@@ -219,6 +236,76 @@ export const useSupabaseData = () => {
       }
 
       loadCustomers();
+      return data;
+    }
+  };
+
+  // Products Catalog functions
+  const loadProductsCatalog = async () => {
+    if (!user) return;
+    
+    const { data, error } = await supabase
+      .from('products_catalog')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: "Error al cargar el catálogo de productos",
+        variant: "destructive",
+      });
+    } else {
+      setProductsCatalog(data || []);
+    }
+  };
+
+  const saveProductCatalog = async (product: ProductCatalog) => {
+    if (!user) return null;
+    
+    const productData = {
+      ...product,
+      user_id: user.id,
+    };
+
+    if (product.id) {
+      const { data, error } = await supabase
+        .from('products_catalog')
+        .update(productData)
+        .eq('id', product.id)
+        .eq('user_id', user.id)
+        .select()
+        .single();
+
+      if (error) {
+        toast({
+          title: "Error",
+          description: "Error al actualizar el producto",
+          variant: "destructive",
+        });
+        return null;
+      }
+
+      loadProductsCatalog();
+      return data;
+    } else {
+      const { data, error } = await supabase
+        .from('products_catalog')
+        .insert([productData])
+        .select()
+        .single();
+
+      if (error) {
+        toast({
+          title: "Error",
+          description: "Error al crear el producto",
+          variant: "destructive",
+        });
+        return null;
+      }
+
+      loadProductsCatalog();
       return data;
     }
   };
@@ -372,14 +459,17 @@ export const useSupabaseData = () => {
     companies,
     defaultCompany,
     customers,
+    productsCatalog,
     quotations,
     saveCompany,
     saveCustomer,
+    saveProductCatalog,
     saveQuotation,
     loadQuotationProducts,
     uploadImage,
     loadCompanies,
     loadCustomers,
+    loadProductsCatalog,
     loadQuotations,
   };
 };

@@ -98,8 +98,48 @@ export type Database = {
         }
         Relationships: []
       }
+      products_catalog: {
+        Row: {
+          availability: string | null
+          created_at: string
+          description: string
+          id: string
+          image_url: string | null
+          item_number: string | null
+          unit_price: number
+          updated_at: string
+          user_id: string
+          warranty: string | null
+        }
+        Insert: {
+          availability?: string | null
+          created_at?: string
+          description: string
+          id?: string
+          image_url?: string | null
+          item_number?: string | null
+          unit_price?: number
+          updated_at?: string
+          user_id: string
+          warranty?: string | null
+        }
+        Update: {
+          availability?: string | null
+          created_at?: string
+          description?: string
+          id?: string
+          image_url?: string | null
+          item_number?: string | null
+          unit_price?: number
+          updated_at?: string
+          user_id?: string
+          warranty?: string | null
+        }
+        Relationships: []
+      }
       quotation_products: {
         Row: {
+          availability: string | null
           created_at: string
           description: string
           id: string
@@ -113,8 +153,10 @@ export type Database = {
           total: number
           unit_price: number
           updated_at: string
+          warranty: string | null
         }
         Insert: {
+          availability?: string | null
           created_at?: string
           description: string
           id?: string
@@ -128,8 +170,10 @@ export type Database = {
           total?: number
           unit_price?: number
           updated_at?: string
+          warranty?: string | null
         }
         Update: {
+          availability?: string | null
           created_at?: string
           description?: string
           id?: string
@@ -143,6 +187,7 @@ export type Database = {
           total?: number
           unit_price?: number
           updated_at?: string
+          warranty?: string | null
         }
         Relationships: [
           {

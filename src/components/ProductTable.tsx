@@ -6,12 +6,15 @@ import { Textarea } from '@/components/ui/textarea';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Plus, Trash2, Upload, Calendar } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
-import { Product } from '@/hooks/useSupabaseData';
+import { Product, ProductCatalog } from '@/hooks/useSupabaseData';
 import { useToast } from '@/hooks/use-toast';
+import { ProductSelector } from './ProductSelector';
 
 interface ProductTableProps {
   products: Product[];
   setProducts: (products: Product[]) => void;
+  productsCatalog: ProductCatalog[];
+  saveProductCatalog: (product: ProductCatalog) => Promise<ProductCatalog | null>;
   quotationNumber: string;
   setQuotationNumber: (number: string) => void;
   quotationDate: string;
@@ -23,6 +26,8 @@ interface ProductTableProps {
 const ProductTable: React.FC<ProductTableProps> = ({
   products,
   setProducts,
+  productsCatalog,
+  saveProductCatalog,
   quotationNumber,
   setQuotationNumber,
   quotationDate,
@@ -42,7 +47,9 @@ const ProductTable: React.FC<ProductTableProps> = ({
       subtotal: 0,
       iva_percentage: 19,
       iva_amount: 0,
-      total: 0
+      total: 0,
+      availability: '',
+      warranty: ''
     };
     setProducts([...products, newProduct]);
   };
@@ -157,6 +164,43 @@ const ProductTable: React.FC<ProductTableProps> = ({
         </div>
       </div>
 
+      {/* Product Selector */}
+      <div className="p-4 bg-muted/30 rounded-lg border">
+        <Label className="text-sm font-medium mb-2 block">
+          Seleccionar Producto del Catálogo
+        </Label>
+        <ProductSelector
+          products={productsCatalog}
+          onProductSelect={(catalogProduct) => {
+            const newProduct: Product = {
+              id: uuidv4(),
+              item_number: (products.length + 1).toString(),
+              description: catalogProduct.description,
+              quantity: 1,
+              unit_price: catalogProduct.unit_price,
+              subtotal: catalogProduct.unit_price,
+              iva_percentage: 19,
+              iva_amount: catalogProduct.unit_price * 0.19,
+              total: catalogProduct.unit_price * 1.19,
+              availability: catalogProduct.availability || '',
+              warranty: catalogProduct.warranty || '',
+              image_url: catalogProduct.image_url
+            };
+            setProducts([...products, newProduct]);
+          }}
+          onCreateNew={async () => {
+            // Create a product in the catalog first
+            const newCatalogProduct: ProductCatalog = {
+              description: 'Nuevo producto',
+              unit_price: 0,
+              availability: '',
+              warranty: ''
+            };
+            await saveProductCatalog(newCatalogProduct);
+          }}
+        />
+      </div>
+
       {/* Products Table */}
       <div className="overflow-x-auto">
         <Table>
@@ -164,6 +208,8 @@ const ProductTable: React.FC<ProductTableProps> = ({
             <TableRow className="bg-primary/5">
               <TableHead className="w-16">ITEM</TableHead>
               <TableHead className="min-w-48">DESCRIPCIÓN</TableHead>
+              <TableHead className="w-32">DISPONIBILIDAD</TableHead>
+              <TableHead className="w-32">GARANTÍA</TableHead>
               <TableHead className="w-20">CANT.</TableHead>
               <TableHead className="w-32">PRECIO UNIT.</TableHead>
               <TableHead className="w-20">IVA %</TableHead>
@@ -186,6 +232,22 @@ const ProductTable: React.FC<ProductTableProps> = ({
                     placeholder="Descripción del producto/servicio"
                     rows={2}
                     className="min-w-full resize-none"
+                  />
+                </TableCell>
+                <TableCell>
+                  <Input
+                    value={product.availability || ''}
+                    onChange={(e) => updateProduct(product.id, 'availability', e.target.value)}
+                    placeholder="Disponibilidad"
+                    className="w-full"
+                  />
+                </TableCell>
+                <TableCell>
+                  <Input
+                    value={product.warranty || ''}
+                    onChange={(e) => updateProduct(product.id, 'warranty', e.target.value)}
+                    placeholder="Garantía"
+                    className="w-full"
                   />
                 </TableCell>
                 <TableCell>

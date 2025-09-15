@@ -104,6 +104,8 @@ const QuotationPreview: React.FC<QuotationPreviewProps> = ({
                 <tr style={{ backgroundColor: `${primaryColor}15` }}>
                   <th className="border border-gray-300 px-3 py-2 text-left text-sm font-semibold">ITEM</th>
                   <th className="border border-gray-300 px-3 py-2 text-left text-sm font-semibold">DESCRIPCIÓN</th>
+                  <th className="border border-gray-300 px-3 py-2 text-center text-sm font-semibold">DISPONIBILIDAD</th>
+                  <th className="border border-gray-300 px-3 py-2 text-center text-sm font-semibold">GARANTÍA</th>
                   <th className="border border-gray-300 px-3 py-2 text-center text-sm font-semibold">CANT.</th>
                   <th className="border border-gray-300 px-3 py-2 text-right text-sm font-semibold">PRECIO UNIT.</th>
                   <th className="border border-gray-300 px-3 py-2 text-center text-sm font-semibold">IVA %</th>
@@ -129,6 +131,8 @@ const QuotationPreview: React.FC<QuotationPreviewProps> = ({
                       )}
                     </div>
                   </td>
+                  <td className="border border-gray-300 px-3 py-2 text-center text-sm">{product.availability || 'N/A'}</td>
+                  <td className="border border-gray-300 px-3 py-2 text-center text-sm">{product.warranty || 'N/A'}</td>
                   <td className="border border-gray-300 px-3 py-2 text-center text-sm">{product.quantity}</td>
                   <td className="border border-gray-300 px-3 py-2 text-right text-sm">{formatCurrency(product.unit_price)}</td>
                   <td className="border border-gray-300 px-3 py-2 text-center text-sm">{product.iva_percentage}%</td>
