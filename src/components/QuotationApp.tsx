@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
-import { Printer, Eye, Settings, Save, FolderOpen, Plus } from 'lucide-react';
+import { Printer, Eye, Settings, Save, FolderOpen, Plus, Download } from 'lucide-react';
 import CompanySettings from './CompanySettings';
 import CustomerForm from './CustomerForm';
 import ProductTable from './ProductTable';
@@ -15,6 +15,7 @@ import QuotationFormats from './QuotationFormats';
 import QuotationsList from './QuotationsList';
 import { useToast } from '@/hooks/use-toast';
 import { useSupabaseData, Company, Customer, Product, Quotation } from '@/hooks/useSupabaseData';
+import html2pdf from 'html2pdf.js';
 
 // Interfaces are now imported from useSupabaseData hook
 
@@ -452,6 +453,43 @@ const QuotationApp = () => {
     }
   });
 
+  const handleDownloadPDF = async () => {
+    try {
+      if (!printRef.current) return;
+      const element = printRef.current;
+
+      // Esperar a que las imágenes carguen para evitar lienzos "manchados"
+      const imgs = element.querySelectorAll('img');
+      await Promise.all(
+        Array.from(imgs).map((img) =>
+          img.complete
+            ? Promise.resolve(true)
+            : new Promise((res) => {
+                img.onload = () => res(true);
+                img.onerror = () => res(true);
+              })
+        )
+      );
+
+      const opt: any = {
+        margin: [10, 10, 10, 10],
+        filename: `Cotizacion-${quotationNumber}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: window.devicePixelRatio > 1 ? 2 : 1.5, useCORS: true, allowTaint: true, backgroundColor: '#ffffff' },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      };
+
+      // @ts-ignore - html2pdf no tiene tipos
+      await (html2pdf() as any).set(opt).from(element).save();
+
+      toast({ title: 'PDF generado', description: 'La cotización se descargó correctamente.' });
+    } catch (e) {
+      console.error('PDF generation error', e);
+      // @ts-ignore - variantes del toast
+      toast({ title: 'Error al generar PDF', description: 'Intenta nuevamente.', variant: 'destructive' });
+    }
+  };
+
   const calculateTotals = () => {
     const subtotal = products.reduce((sum, product) => sum + product.subtotal, 0);
     const totalIva = products.reduce((sum, product) => sum + product.iva_amount, 0);
@@ -754,9 +792,18 @@ const QuotationApp = () => {
                 <Printer className="w-5 h-5 mr-2" />
                 Descargar PDF ({selectedFormat === 'standard' ? 'Estándar' : selectedFormat === 'compact' ? 'Compacto' : 'Detallado'})
               </Button>
+              <Button
+                onClick={handleDownloadPDF}
+                size="lg"
+                variant="outline"
+                className="mt-3"
+              >
+                <Download className="w-5 h-5 mr-2" />
+                Descargar PDF (Directo)
+              </Button>
             </div>
             
-            <div style={{ display: 'none' }}>
+            <div style={{ position: 'absolute', left: '-10000px', top: 0, opacity: 0, pointerEvents: 'none' }}>
               <div ref={printRef}>
                 <QuotationFormats
                   company={company}

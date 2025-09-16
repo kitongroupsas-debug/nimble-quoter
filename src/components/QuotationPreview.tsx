@@ -53,6 +53,7 @@ const QuotationPreview: React.FC<QuotationPreviewProps> = ({
             <img 
               src={company.logo_url} 
               alt="Logo" 
+              crossOrigin="anonymous"
               className="w-20 h-20 object-contain"
             />
           ) : (
@@ -124,6 +125,7 @@ const QuotationPreview: React.FC<QuotationPreviewProps> = ({
                           <img 
                             src={product.image_url} 
                             alt="Producto" 
+                            crossOrigin="anonymous"
                             className="w-20 h-20 object-contain rounded border bg-white"
                             style={{ maxWidth: '80px', maxHeight: '80px' }}
                           />

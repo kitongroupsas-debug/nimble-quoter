@@ -57,6 +57,7 @@ const QuotationFormats: React.FC<QuotationFormatProps> = ({
               <img 
                 src={company.logo_url} 
                 alt="Logo" 
+                crossOrigin="anonymous"
                 className="w-20 h-20 object-contain"
               />
             ) : (
@@ -128,6 +129,7 @@ const QuotationFormats: React.FC<QuotationFormatProps> = ({
                             <img 
                               src={product.image_url} 
                               alt="Producto" 
+                              crossOrigin="anonymous"
                               className="w-20 h-20 object-contain rounded border bg-white"
                               style={{ maxWidth: '80px', maxHeight: '80px' }}
                             />
@@ -236,6 +238,7 @@ const QuotationFormats: React.FC<QuotationFormatProps> = ({
               <img 
                 src={company.logo_url} 
                 alt="Logo" 
+                crossOrigin="anonymous"
                 className="w-16 h-16 object-contain"
               />
             )}
@@ -289,6 +292,7 @@ const QuotationFormats: React.FC<QuotationFormatProps> = ({
                   <img 
                     src={product.image_url} 
                     alt="Producto" 
+                    crossOrigin="anonymous"
                     className="w-16 h-16 object-contain rounded border bg-white mt-2"
                   />
                 )}
@@ -331,6 +335,7 @@ const QuotationFormats: React.FC<QuotationFormatProps> = ({
                 <img 
                   src={company.logo_url} 
                   alt="Logo" 
+                  crossOrigin="anonymous"
                   className="w-24 h-24 object-contain"
                 />
               ) : (
