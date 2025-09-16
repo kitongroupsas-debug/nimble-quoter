@@ -122,4 +122,41 @@ Corporate blue theme with professional styling.
   body {
     @apply bg-background text-foreground;
   }
+
+  /* Print styles for tabloid size */
+  @media print {
+    @page {
+      size: 11in 17in; /* Tabloid size */
+      margin: 0.5in;
+    }
+    
+    body {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    
+    .print-container {
+      width: 100% !important;
+      max-width: none !important;
+      margin: 0 !important;
+      padding: 20px !important;
+      font-size: 12px !important;
+    }
+    
+    .print-container table {
+      font-size: 11px !important;
+    }
+    
+    .print-container h1 {
+      font-size: 24px !important;
+    }
+    
+    .print-container h2 {
+      font-size: 20px !important;
+    }
+    
+    .print-container h3 {
+      font-size: 16px !important;
+    }
+  }
 }

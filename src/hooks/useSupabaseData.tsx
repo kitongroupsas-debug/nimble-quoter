@@ -242,12 +242,14 @@ export const useSupabaseData = () => {
       .order('created_at', { ascending: false });
 
     if (error) {
+      console.error('Error loading products catalog:', error);
       toast({
         title: "Error",
         description: "Error al cargar el catálogo de productos",
         variant: "destructive",
       });
     } else {
+      console.log('Products catalog loaded:', data);
       setProductsCatalog(data || []);
     }
   };

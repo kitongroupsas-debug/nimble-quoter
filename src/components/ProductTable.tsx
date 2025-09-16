@@ -169,6 +169,12 @@ const ProductTable: React.FC<ProductTableProps> = ({
         <Label className="text-sm font-medium mb-2 block">
           Seleccionar Producto del Catálogo
         </Label>
+        {productsCatalog.length === 0 ? (
+          <div className="text-center py-4 text-muted-foreground">
+            <p>No hay productos en el catálogo.</p>
+            <p className="text-sm">Crea productos primero para poder seleccionarlos aquí.</p>
+          </div>
+        ) : (
         <ProductSelector
           products={productsCatalog}
           onProductSelect={(catalogProduct) => {
@@ -204,6 +210,7 @@ const ProductTable: React.FC<ProductTableProps> = ({
             await saveProductCatalog(newCatalogProduct);
           }}
         />
+        )}
       </div>
 
       {/* Products Table */}

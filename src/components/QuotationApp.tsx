@@ -6,12 +6,13 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
-import { Printer, Eye, Settings, Save } from 'lucide-react';
+import { Printer, Eye, Settings, Save, FolderOpen, Plus } from 'lucide-react';
 import CompanySettings from './CompanySettings';
 import CustomerForm from './CustomerForm';
 import ProductTable from './ProductTable';
 import QuotationPreview from './QuotationPreview';
 import QuotationFormats from './QuotationFormats';
+import QuotationsList from './QuotationsList';
 import { useToast } from '@/hooks/use-toast';
 import { useSupabaseData, Company, Customer, Product, Quotation } from '@/hooks/useSupabaseData';
 
@@ -22,13 +23,16 @@ const QuotationApp = () => {
   const printRef = useRef<HTMLDivElement>(null);
   const { 
     loading, 
+    companies,
     customers,
     productsCatalog,
+    quotations,
     defaultCompany, 
     saveCompany, 
     saveCustomer,
     saveProductCatalog,
     saveQuotation, 
+    loadQuotationProducts,
     uploadImage 
   } = useSupabaseData();
   
@@ -84,6 +88,21 @@ const QuotationApp = () => {
   const handlePrint = useReactToPrint({
     contentRef: printRef,
     documentTitle: `Cotización-${quotationNumber}`,
+    pageStyle: `
+      @page {
+        size: 11in 17in;
+        margin: 0.5in;
+      }
+      @media print {
+        body { -webkit-print-color-adjust: exact; }
+        .print-container { 
+          width: 100% !important;
+          max-width: none !important;
+          margin: 0 !important;
+          padding: 20px !important;
+        }
+      }
+    `,
     onAfterPrint: () => {
       toast({
         title: "Cotización descargada",
@@ -156,6 +175,74 @@ const QuotationApp = () => {
     }
   };
 
+  const handleLoadQuotation = async (quotation: Quotation) => {
+    try {
+      // Load quotation data
+      setQuotationNumber(quotation.quotation_number);
+      setObservations(quotation.observations || '');
+      setSelectedFormat(quotation.format as 'standard' | 'compact' | 'detailed' || 'standard');
+      
+      // Load quotation products
+      const quotationProducts = await loadQuotationProducts(quotation.id!);
+      setProducts(quotationProducts);
+      
+      // Load company and customer if available
+      if (quotation.company_id && companies.length > 0) {
+        const quotationCompany = companies.find(c => c.id === quotation.company_id);
+        if (quotationCompany) {
+          setCompany(quotationCompany);
+        }
+      }
+      
+      if (quotation.customer_id && customers.length > 0) {
+        const quotationCustomer = customers.find(c => c.id === quotation.customer_id);
+        if (quotationCustomer) {
+          setCustomer(quotationCustomer);
+        }
+      }
+      
+      toast({
+        title: "Cotización cargada",
+        description: "La cotización se ha cargado correctamente.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "No se pudo cargar la cotización.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleNewQuotation = () => {
+    setQuotationNumber(uuidv4().slice(0, 8).toUpperCase());
+    setObservations('');
+    setSelectedFormat('standard');
+    setProducts([
+      {
+        id: uuidv4(),
+        item_number: '1',
+        description: '',
+        quantity: 1,
+        unit_price: 0,
+        subtotal: 0,
+        iva_percentage: 19,
+        iva_amount: 0,
+        total: 0,
+        availability: '',
+        warranty: ''
+      }
+    ]);
+    setCustomer({
+      name: '',
+      company: '',
+      document: '',
+      email: '',
+      phone: '',
+      address: ''
+    });
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-light to-secondary p-4">
       <div className="max-w-7xl mx-auto">
@@ -165,19 +252,34 @@ const QuotationApp = () => {
         </div>
 
         <div className="flex justify-center mb-6">
-          <Button 
-            onClick={handleSaveQuotation}
-            disabled={saving || loading}
-            size="lg"
-            className="bg-green-600 hover:bg-green-700 text-white shadow-lg"
-          >
-            <Save className="w-5 h-5 mr-2" />
-            {saving ? "Guardando..." : "Guardar Cotización"}
-          </Button>
+          <div className="flex gap-4">
+            <Button 
+              onClick={handleNewQuotation}
+              variant="outline"
+              size="lg"
+              className="shadow-lg"
+            >
+              <Plus className="w-5 h-5 mr-2" />
+              Nueva Cotización
+            </Button>
+            <Button 
+              onClick={handleSaveQuotation}
+              disabled={saving || loading}
+              size="lg"
+              className="bg-green-600 hover:bg-green-700 text-white shadow-lg"
+            >
+              <Save className="w-5 h-5 mr-2" />
+              {saving ? "Guardando..." : "Guardar Cotización"}
+            </Button>
+          </div>
         </div>
 
         <Tabs defaultValue="create" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 max-w-md mx-auto">
+          <TabsList className="grid w-full grid-cols-4 max-w-2xl mx-auto">
+            <TabsTrigger value="quotations" className="flex items-center gap-2">
+              <FolderOpen className="w-4 h-4" />
+              Cotizaciones
+            </TabsTrigger>
             <TabsTrigger value="create" className="flex items-center gap-2">
               <Settings className="w-4 h-4" />
               Crear
@@ -191,6 +293,19 @@ const QuotationApp = () => {
               Imprimir
             </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="quotations">
+            <Card className="shadow-lg">
+              <CardContent className="p-6">
+                <h2 className="text-2xl font-semibold text-primary mb-4">Cotizaciones Guardadas</h2>
+                <QuotationsList
+                  quotations={quotations}
+                  onLoadQuotation={handleLoadQuotation}
+                  loading={loading}
+                />
+              </CardContent>
+            </Card>
+          </TabsContent>
 
           <TabsContent value="create" className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
