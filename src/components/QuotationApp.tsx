@@ -85,7 +85,348 @@ const QuotationApp = () => {
     }
   }, [defaultCompany]);
 
-  const handlePrint = useReactToPrint({
+  // Detectar si es dispositivo móvil
+  const isMobile = () => {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+           (window.innerWidth <= 768);
+  };
+
+  // Función para generar HTML completo de la cotización
+  const generateQuotationHTML = () => {
+    const totals = calculateTotals();
+    const primaryColor = company.primary_color || '#2563eb';
+    
+    return `
+      <!DOCTYPE html>
+      <html lang="es">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Cotización ${quotationNumber}</title>
+        <style>
+          * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+          }
+          body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: white;
+            color: #000;
+            line-height: 1.4;
+            -webkit-print-color-adjust: exact;
+          }
+          .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+          }
+          .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e5e7eb;
+          }
+          .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+          }
+          .logo {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+          }
+          .logo-placeholder {
+            width: 60px;
+            height: 60px;
+            background: #f3f4f6;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+          .company-info h1 {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1f2937;
+            margin-bottom: 5px;
+          }
+          .company-info p {
+            color: #6b7280;
+            font-size: 12px;
+          }
+          .quotation-info {
+            text-align: right;
+          }
+          .quotation-info h2 {
+            font-size: 20px;
+            font-weight: bold;
+            color: ${primaryColor};
+            margin-bottom: 10px;
+          }
+          .quotation-info div {
+            font-size: 12px;
+            margin-bottom: 3px;
+          }
+          .customer-section {
+            margin-bottom: 30px;
+          }
+          .customer-section h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 10px;
+          }
+          .customer-info {
+            font-size: 12px;
+            line-height: 1.6;
+          }
+          .products-section {
+            margin-bottom: 30px;
+          }
+          .products-section h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 15px;
+          }
+          .products-table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid #d1d5db;
+          }
+          .products-table th,
+          .products-table td {
+            border: 1px solid #d1d5db;
+            padding: 8px;
+            font-size: 11px;
+          }
+          .products-table th {
+            background-color: ${primaryColor}15;
+            font-weight: 600;
+            text-align: center;
+          }
+          .products-table td {
+            text-align: center;
+          }
+          .products-table .desc-col {
+            text-align: left;
+            max-width: 200px;
+          }
+          .products-table .price-col {
+            text-align: right;
+          }
+          .observations {
+            margin-bottom: 30px;
+          }
+          .observations h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 10px;
+          }
+          .observations-content {
+            background: #f9fafb;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            font-size: 12px;
+            line-height: 1.6;
+          }
+          .totals-section {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 40px;
+          }
+          .totals-table {
+            width: 300px;
+            border-collapse: collapse;
+            border: 1px solid #d1d5db;
+          }
+          .totals-table td {
+            border: 1px solid #d1d5db;
+            padding: 10px;
+            font-size: 12px;
+          }
+          .totals-table .label {
+            background: #f9fafb;
+            font-weight: 600;
+          }
+          .totals-table .value {
+            text-align: right;
+          }
+          .totals-table .total-row {
+            background: ${primaryColor}15;
+          }
+          .totals-table .total-row td {
+            font-weight: bold;
+            font-size: 14px;
+          }
+          .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+            text-align: center;
+            font-size: 11px;
+            color: #6b7280;
+          }
+          .contact-info {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            font-size: 11px;
+          }
+          @media print {
+            body { -webkit-print-color-adjust: exact; }
+            .container { margin: 0; padding: 10px; }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <div class="logo-section">
+              ${company.logo_url ? 
+                `<img src="${company.logo_url}" alt="Logo" class="logo" />` :
+                '<div class="logo-placeholder">🏢</div>'
+              }
+              <div class="company-info">
+                <h1>${company.name || 'Empresa'}</h1>
+                ${company.nit ? `<p><strong>NIT:</strong> ${company.nit}</p>` : ''}
+              </div>
+            </div>
+            <div class="quotation-info">
+              <h2>COTIZACIÓN</h2>
+              <div><strong>No:</strong> ${quotationNumber}</div>
+              <div><strong>Fecha:</strong> ${quotationDate}</div>
+            </div>
+          </div>
+
+          <div class="customer-section">
+            <h3>Datos del Cliente</h3>
+            <div class="customer-info">
+              <div><strong>Cliente:</strong> ${customer.name || 'N/A'}</div>
+              ${customer.company ? `<div><strong>Empresa:</strong> ${customer.company}</div>` : ''}
+              <div><strong>Documento:</strong> ${customer.document || 'N/A'}</div>
+              <div><strong>Email:</strong> ${customer.email || 'N/A'}</div>
+              <div><strong>Teléfono:</strong> ${customer.phone || 'N/A'}</div>
+              ${customer.address ? `<div><strong>Dirección:</strong> ${customer.address}</div>` : ''}
+            </div>
+          </div>
+
+          <div class="products-section">
+            <h3>Productos y Servicios</h3>
+            <table class="products-table">
+              <thead>
+                <tr>
+                  <th>ITEM</th>
+                  <th>DESCRIPCIÓN</th>
+                  <th>DISPONIBILIDAD</th>
+                  <th>GARANTÍA</th>
+                  <th>CANT.</th>
+                  <th>PRECIO UNIT.</th>
+                  <th>IVA %</th>
+                  <th>TOTAL</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${products.map(product => `
+                  <tr>
+                    <td>${product.item_number}</td>
+                    <td class="desc-col">${product.description || 'Sin descripción'}</td>
+                    <td>${product.availability || 'N/A'}</td>
+                    <td>${product.warranty || 'N/A'}</td>
+                    <td>${product.quantity}</td>
+                    <td class="price-col">$${product.unit_price.toLocaleString('es-CO')}</td>
+                    <td>${product.iva_percentage}%</td>
+                    <td class="price-col"><strong>$${product.total.toLocaleString('es-CO')}</strong></td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+
+          ${observations ? `
+            <div class="observations">
+              <h3>Observaciones</h3>
+              <div class="observations-content">
+                ${observations.replace(/\n/g, '<br>')}
+              </div>
+            </div>
+          ` : ''}
+
+          <div class="totals-section">
+            <table class="totals-table">
+              <tbody>
+                <tr>
+                  <td class="label">Subtotal:</td>
+                  <td class="value">$${totals.subtotal.toLocaleString('es-CO')}</td>
+                </tr>
+                <tr>
+                  <td class="label">IVA:</td>
+                  <td class="value">$${totals.totalIva.toLocaleString('es-CO')}</td>
+                </tr>
+                <tr class="total-row">
+                  <td class="label">TOTAL:</td>
+                  <td class="value" style="color: ${primaryColor};">$${totals.total.toLocaleString('es-CO')}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="footer">
+            <div class="contact-info">
+              ${company.phone ? `<div>📞 ${company.phone}</div>` : ''}
+              ${company.email ? `<div>✉️ ${company.email}</div>` : ''}
+              ${company.address ? `<div>📍 ${company.address}</div>` : ''}
+              ${company.city ? `<div>${company.city}</div>` : ''}
+            </div>
+            <div>
+              <p>Esta cotización es válida por 30 días a partir de la fecha de emisión.</p>
+              <p>Gracias por su confianza en nuestros servicios.</p>
+            </div>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+  };
+
+  // Función mejorada para impresión que funciona en móviles
+  const handlePrint = () => {
+    if (isMobile()) {
+      // En móviles, crear un nuevo window con el HTML completo
+      const quotationHTML = generateQuotationHTML();
+      const printWindow = window.open('', '_blank', 'width=800,height=600');
+      
+      if (printWindow) {
+        printWindow.document.write(quotationHTML);
+        printWindow.document.close();
+        
+        // Esperar a que el contenido se cargue antes de imprimir
+        printWindow.onload = () => {
+          setTimeout(() => {
+            printWindow.print();
+            printWindow.close();
+            
+            toast({
+              title: "Cotización descargada",
+              description: "La cotización se ha descargado correctamente en formato PDF.",
+            });
+          }, 500);
+        };
+      }
+    } else {
+      // En desktop usar react-to-print
+      reactToPrintHandler();
+    }
+  };
+
+  const reactToPrintHandler = useReactToPrint({
     contentRef: printRef,
     documentTitle: `Cotización-${quotationNumber}`,
     pageStyle: `
