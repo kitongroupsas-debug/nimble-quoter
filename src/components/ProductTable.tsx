@@ -207,7 +207,22 @@ const ProductTable: React.FC<ProductTableProps> = ({
               availability: '',
               warranty: ''
             };
-            await saveProductCatalog(newCatalogProduct);
+            try {
+              const result = await saveProductCatalog(newCatalogProduct);
+              if (result) {
+                toast({
+                  title: "Producto creado",
+                  description: "Nuevo producto añadido al catálogo.",
+                });
+              }
+            } catch (error) {
+              console.error('Error creating new catalog product:', error);
+              toast({
+                title: "Error",
+                description: "No se pudo crear el producto en el catálogo.",
+                variant: "destructive",
+              });
+            }
           }}
         />
         )}
@@ -326,14 +341,53 @@ const ProductTable: React.FC<ProductTableProps> = ({
                   </div>
                 </TableCell>
                 <TableCell>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => removeProduct(product.id)}
-                    disabled={products.length === 1}
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
+                  <div className="flex flex-col gap-1">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={async () => {
+                        const catalogProduct: Product = {
+                          description: product.description,
+                          unit_price: product.unit_price,
+                          iva_percentage: product.iva_percentage,
+                          quantity: 1, // Reset to 1 for catalog
+                          subtotal: product.unit_price,
+                          iva_amount: product.unit_price * (product.iva_percentage / 100),
+                          total: product.unit_price * (1 + product.iva_percentage / 100),
+                          availability: product.availability,
+                          warranty: product.warranty,
+                          image_url: product.image_url
+                        };
+                        try {
+                          const result = await saveProductCatalog(catalogProduct);
+                          if (result) {
+                            toast({
+                              title: "Guardado en catálogo",
+                              description: "Producto añadido al catálogo para futura reutilización.",
+                            });
+                          }
+                        } catch (error) {
+                          console.error('Error saving to catalog:', error);
+                          toast({
+                            title: "Error",
+                            description: "No se pudo guardar en el catálogo.",
+                            variant: "destructive",
+                          });
+                        }
+                      }}
+                      title="Guardar en catálogo"
+                    >
+                      💾
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => removeProduct(product.id)}
+                      disabled={products.length === 1}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
                 </TableCell>
               </TableRow>
             ))}
