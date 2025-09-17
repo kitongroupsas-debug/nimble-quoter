@@ -104,7 +104,17 @@ const QuotationFormats: React.FC<QuotationFormatProps> = ({
         <div className="mb-8">
           <h3 className="text-lg font-semibold text-gray-800 mb-4">Productos y Servicios</h3>
           <div className="overflow-x-auto">
-            <table className="w-full border-collapse border border-gray-300">
+            <table className="w-full table-fixed border-collapse border border-gray-300">
+              <colgroup>
+                <col style={{ width: '7%' }} />
+                <col style={{ width: '36%' }} />
+                <col style={{ width: '12%' }} />
+                <col style={{ width: '10%' }} />
+                <col style={{ width: '7%' }} />
+                <col style={{ width: '12%' }} />
+                <col style={{ width: '6%' }} />
+                <col style={{ width: '10%' }} />
+              </colgroup>
               <thead>
                 <tr style={{ backgroundColor: `${primaryColor}15` }}>
                   <th className="border border-gray-300 px-3 py-2 text-left text-sm font-semibold">ITEM</th>
@@ -122,20 +132,20 @@ const QuotationFormats: React.FC<QuotationFormatProps> = ({
                   <tr key={product.id} className="hover:bg-gray-50">
                     <td className="border border-gray-300 px-3 py-2 text-center text-sm">{product.item_number}</td>
                     <td className="border border-gray-300 px-3 py-2 text-sm">
-                      <div className="max-w-[250px]">
-                        <div className="break-words">{product.description || 'Sin descripción'}</div>
-                        {product.image_url && (
-                          <div className="mt-2">
-                            <img 
-                              src={product.image_url} 
-                              alt="Producto" 
-                              crossOrigin="anonymous"
-                              className="w-20 h-20 object-contain rounded border bg-white"
-                              style={{ maxWidth: '80px', maxHeight: '80px' }}
-                            />
-                          </div>
-                        )}
+                      <div className="break-words whitespace-normal">
+                        {product.description || 'Sin descripción'}
                       </div>
+                      {product.image_url && (
+                        <div className="mt-2">
+                          <img 
+                            src={product.image_url} 
+                            alt="Producto" 
+                            crossOrigin="anonymous"
+                            className="w-20 h-20 object-contain rounded border bg-white"
+                            style={{ maxWidth: '80px', maxHeight: '80px' }}
+                          />
+                        </div>
+                      )}
                     </td>
                     <td className="border border-gray-300 px-3 py-2 text-center text-sm">{product.availability || 'Inmediata'}</td>
                     <td className="border border-gray-300 px-3 py-2 text-center text-sm">{product.warranty || '1 año'}</td>
