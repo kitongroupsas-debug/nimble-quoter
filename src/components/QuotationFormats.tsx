@@ -106,34 +106,34 @@ const QuotationFormats: React.FC<QuotationFormatProps> = ({
           <div className="overflow-x-auto">
             <table className="w-full table-fixed border-collapse border border-gray-300">
               <colgroup>
-                <col style={{ width: '7%' }} />
-                <col style={{ width: '36%' }} />
-                <col style={{ width: '12%' }} />
-                <col style={{ width: '10%' }} />
-                <col style={{ width: '7%' }} />
-                <col style={{ width: '12%' }} />
                 <col style={{ width: '6%' }} />
+                <col style={{ width: '34%' }} />
+                <col style={{ width: '12%' }} />
                 <col style={{ width: '10%' }} />
+                <col style={{ width: '7%' }} />
+                <col style={{ width: '14%' }} />
+                <col style={{ width: '5%' }} />
+                <col style={{ width: '12%' }} />
               </colgroup>
               <thead>
                 <tr style={{ backgroundColor: `${primaryColor}15` }}>
-                  <th className="border border-gray-300 px-3 py-2 text-left text-sm font-semibold">ITEM</th>
-                  <th className="border border-gray-300 px-3 py-2 text-left text-sm font-semibold">DESCRIPCIÓN</th>
-                  <th className="border border-gray-300 px-3 py-2 text-center text-sm font-semibold">DISPONIBILIDAD</th>
-                  <th className="border border-gray-300 px-3 py-2 text-center text-sm font-semibold">GARANTÍA</th>
-                  <th className="border border-gray-300 px-3 py-2 text-center text-sm font-semibold">CANT.</th>
-                  <th className="border border-gray-300 px-3 py-2 text-right text-sm font-semibold">PRECIO UNIT.</th>
-                  <th className="border border-gray-300 px-3 py-2 text-center text-sm font-semibold">IVA %</th>
-                  <th className="border border-gray-300 px-3 py-2 text-right text-sm font-semibold">TOTAL</th>
+                  <th className="border border-gray-300 px-2 py-2 text-left text-xs leading-tight font-semibold whitespace-nowrap">ITEM</th>
+                  <th className="border border-gray-300 px-2 py-2 text-left text-xs leading-tight font-semibold whitespace-nowrap">DESCRIPCIÓN</th>
+                  <th className="border border-gray-300 px-2 py-2 text-center text-xs leading-tight font-semibold whitespace-nowrap">DISPONIBILIDAD</th>
+                  <th className="border border-gray-300 px-2 py-2 text-center text-xs leading-tight font-semibold whitespace-nowrap">GARANTÍA</th>
+                  <th className="border border-gray-300 px-2 py-2 text-center text-xs leading-tight font-semibold whitespace-nowrap">CANT.</th>
+                  <th className="border border-gray-300 px-2 py-2 text-right text-xs leading-tight font-semibold whitespace-nowrap">PRECIO UNIT.</th>
+                  <th className="border border-gray-300 px-2 py-2 text-center text-xs leading-tight font-semibold whitespace-nowrap">IVA %</th>
+                  <th className="border border-gray-300 px-2 py-2 text-right text-xs leading-tight font-semibold whitespace-nowrap">TOTAL</th>
                 </tr>
               </thead>
               <tbody>
                 {products.map((product) => (
-                  <tr key={product.id} className="hover:bg-gray-50">
-                    <td className="border border-gray-300 px-3 py-2 text-center text-sm">{product.item_number}</td>
-                    <td className="border border-gray-300 px-3 py-2 text-sm">
-                      <div className="break-words whitespace-normal">
-                        {product.description || 'Sin descripción'}
+                  <tr key={product.id} className="hover:bg-gray-50" style={{ breakInside: 'avoid', pageBreakInside: 'avoid' }}>
+                    <td className="border border-gray-300 px-2 py-2 text-center text-sm align-top">{product.item_number}</td>
+                    <td className="border border-gray-300 px-2 py-2 text-sm align-top">
+                      <div className="whitespace-pre-wrap break-words hyphens-auto">
+                        {product.description || "Sin descripción"}
                       </div>
                       {product.image_url && (
                         <div className="mt-2">
@@ -147,12 +147,12 @@ const QuotationFormats: React.FC<QuotationFormatProps> = ({
                         </div>
                       )}
                     </td>
-                    <td className="border border-gray-300 px-3 py-2 text-center text-sm">{product.availability || 'Inmediata'}</td>
-                    <td className="border border-gray-300 px-3 py-2 text-center text-sm">{product.warranty || '1 año'}</td>
-                    <td className="border border-gray-300 px-3 py-2 text-center text-sm">{product.quantity}</td>
-                    <td className="border border-gray-300 px-3 py-2 text-right text-sm">{formatCurrency(product.unit_price)}</td>
-                    <td className="border border-gray-300 px-3 py-2 text-center text-sm">{product.iva_percentage}%</td>
-                    <td className="border border-gray-300 px-3 py-2 text-right text-sm font-semibold">{formatCurrency(product.total)}</td>
+                    <td className="border border-gray-300 px-2 py-2 text-center text-sm align-top">{product.availability || "Inmediata"}</td>
+                    <td className="border border-gray-300 px-2 py-2 text-center text-sm align-top">{product.warranty || "1 año"}</td>
+                    <td className="border border-gray-300 px-2 py-2 text-center text-sm align-top">{product.quantity}</td>
+                    <td className="border border-gray-300 px-2 py-2 text-right text-sm tabular-nums align-top">{formatCurrency(product.unit_price)}</td>
+                    <td className="border border-gray-300 px-2 py-2 text-center text-sm align-top">{product.iva_percentage}%</td>
+                    <td className="border border-gray-300 px-2 py-2 text-right text-sm font-semibold tabular-nums align-top">{formatCurrency(product.total)}</td>
                   </tr>
                 ))}
               </tbody>
