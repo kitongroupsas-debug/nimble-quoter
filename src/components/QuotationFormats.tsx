@@ -117,21 +117,21 @@ const QuotationFormats: React.FC<QuotationFormatProps> = ({
               </colgroup>
               <thead>
                 <tr style={{ backgroundColor: `${primaryColor}15` }}>
-                  <th className="border border-gray-300 px-2 py-2 text-left text-xs leading-tight font-semibold whitespace-nowrap">ITEM</th>
-                  <th className="border border-gray-300 px-2 py-2 text-left text-xs leading-tight font-semibold whitespace-nowrap">DESCRIPCIÓN</th>
-                  <th className="border border-gray-300 px-2 py-2 text-center text-xs leading-tight font-semibold whitespace-nowrap">DISPONIBILIDAD</th>
-                  <th className="border border-gray-300 px-2 py-2 text-center text-xs leading-tight font-semibold whitespace-nowrap">GARANTÍA</th>
-                  <th className="border border-gray-300 px-2 py-2 text-center text-xs leading-tight font-semibold whitespace-nowrap">CANT.</th>
-                  <th className="border border-gray-300 px-2 py-2 text-right text-xs leading-tight font-semibold whitespace-nowrap">PRECIO UNIT.</th>
-                  <th className="border border-gray-300 px-2 py-2 text-center text-xs leading-tight font-semibold whitespace-nowrap">IVA %</th>
-                  <th className="border border-gray-300 px-2 py-2 text-right text-xs leading-tight font-semibold whitespace-nowrap">TOTAL</th>
+                  <th className="border border-gray-300 px-2 py-2 text-left text-[11px] leading-snug font-semibold break-words hyphens-auto">ITEM</th>
+                  <th className="border border-gray-300 px-2 py-2 text-left text-[11px] leading-snug font-semibold break-words hyphens-auto">DESCRIPCIÓN</th>
+                  <th className="border border-gray-300 px-2 py-2 text-center text-[11px] leading-snug font-semibold break-words hyphens-auto">DISPONIBILIDAD</th>
+                  <th className="border border-gray-300 px-2 py-2 text-center text-[11px] leading-snug font-semibold break-words hyphens-auto">GARANTÍA</th>
+                  <th className="border border-gray-300 px-2 py-2 text-center text-[11px] leading-snug font-semibold break-words hyphens-auto">CANT.</th>
+                  <th className="border border-gray-300 px-2 py-2 text-right text-[11px] leading-snug font-semibold break-words hyphens-auto">PRECIO UNIT.</th>
+                  <th className="border border-gray-300 px-2 py-2 text-center text-[11px] leading-snug font-semibold break-words hyphens-auto">IVA %</th>
+                  <th className="border border-gray-300 px-2 py-2 text-right text-[11px] leading-snug font-semibold break-words hyphens-auto">TOTAL</th>
                 </tr>
               </thead>
               <tbody>
                 {products.map((product) => (
                   <tr key={product.id} className="hover:bg-gray-50" style={{ breakInside: 'avoid', pageBreakInside: 'avoid' }}>
-                    <td className="border border-gray-300 px-2 py-2 text-center text-sm align-top">{product.item_number}</td>
-                    <td className="border border-gray-300 px-2 py-2 text-sm align-top">
+                    <td className="border border-gray-300 px-2 py-2 text-center text-xs align-top">{product.item_number}</td>
+                    <td className="border border-gray-300 px-2 py-2 text-[12px] align-top">
                       <div className="whitespace-pre-wrap break-words hyphens-auto">
                         {product.description || "Sin descripción"}
                       </div>
@@ -147,12 +147,12 @@ const QuotationFormats: React.FC<QuotationFormatProps> = ({
                         </div>
                       )}
                     </td>
-                    <td className="border border-gray-300 px-2 py-2 text-center text-sm align-top">{product.availability || "Inmediata"}</td>
-                    <td className="border border-gray-300 px-2 py-2 text-center text-sm align-top">{product.warranty || "1 año"}</td>
-                    <td className="border border-gray-300 px-2 py-2 text-center text-sm align-top">{product.quantity}</td>
-                    <td className="border border-gray-300 px-2 py-2 text-right text-sm tabular-nums align-top">{formatCurrency(product.unit_price)}</td>
-                    <td className="border border-gray-300 px-2 py-2 text-center text-sm align-top">{product.iva_percentage}%</td>
-                    <td className="border border-gray-300 px-2 py-2 text-right text-sm font-semibold tabular-nums align-top">{formatCurrency(product.total)}</td>
+                    <td className="border border-gray-300 px-2 py-2 text-center text-xs align-top">{product.availability || "Inmediata"}</td>
+                    <td className="border border-gray-300 px-2 py-2 text-center text-xs align-top">{product.warranty || "1 año"}</td>
+                    <td className="border border-gray-300 px-2 py-2 text-center text-xs align-top">{product.quantity}</td>
+                    <td className="border border-gray-300 pl-2 pr-3 py-2 text-right text-xs tabular-nums tracking-tight align-top">{formatCurrency(product.unit_price)}</td>
+                    <td className="border border-gray-300 px-2 py-2 text-center text-xs align-top">{product.iva_percentage}%</td>
+                    <td className="border border-gray-300 pl-2 pr-3 py-2 text-right text-xs font-semibold tabular-nums tracking-tight align-top">{formatCurrency(product.total)}</td>
                   </tr>
                 ))}
               </tbody>
