@@ -400,31 +400,12 @@ const QuotationApp = () => {
   // Función mejorada para impresión que funciona en móviles
   const handlePrint = () => {
     if (isMobile()) {
-      // En móviles, crear un nuevo window con el HTML completo
-      const quotationHTML = generateQuotationHTML();
-      const printWindow = window.open('', '_blank', 'width=800,height=600');
-      
-      if (printWindow) {
-        printWindow.document.write(quotationHTML);
-        printWindow.document.close();
-        
-        // Esperar a que el contenido se cargue antes de imprimir
-        printWindow.onload = () => {
-          setTimeout(() => {
-            printWindow.print();
-            printWindow.close();
-            
-            toast({
-              title: "Cotización descargada",
-              description: "La cotización se ha descargado correctamente en formato PDF.",
-            });
-          }, 500);
-        };
-      }
-    } else {
-      // En desktop usar react-to-print
-      reactToPrintHandler();
+      // En móviles: evitar el diálogo de impresión de Android y generar descarga directa
+      handleDownloadPDF();
+      return;
     }
+    // En desktop usar react-to-print
+    reactToPrintHandler();
   };
 
   const reactToPrintHandler = useReactToPrint({
@@ -475,7 +456,8 @@ const QuotationApp = () => {
         margin: [10, 10, 10, 10],
         filename: `Cotizacion-${quotationNumber}.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: window.devicePixelRatio > 1 ? 2 : 1.5, useCORS: true, allowTaint: true, backgroundColor: '#ffffff' },
+        html2canvas: { scale: window.devicePixelRatio > 1 ? 2 : 1.5, useCORS: true, allowTaint: true, backgroundColor: '#ffffff', scrollX: 0, scrollY: 0 },
+        pagebreak: { mode: ['css', 'legacy'] },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
       };
 
