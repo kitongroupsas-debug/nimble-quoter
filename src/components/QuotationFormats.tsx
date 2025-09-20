@@ -106,25 +106,25 @@ const QuotationFormats: React.FC<QuotationFormatProps> = ({
           <div className="overflow-x-auto">
             <table className="w-full table-fixed border-collapse border border-gray-300">
               <colgroup>
-                <col style={{ width: '6%' }} />
-                <col style={{ width: '34%' }} />
-                <col style={{ width: '12%' }} />
-                <col style={{ width: '10%' }} />
-                <col style={{ width: '7%' }} />
-                <col style={{ width: '14%' }} />
                 <col style={{ width: '5%' }} />
-                <col style={{ width: '12%' }} />
+                <col style={{ width: '33%' }} />
+                <col style={{ width: '13%' }} />
+                <col style={{ width: '9%' }} />
+                <col style={{ width: '6%' }} />
+                <col style={{ width: '16%' }} />
+                <col style={{ width: '4%' }} />
+                <col style={{ width: '14%' }} />
               </colgroup>
               <thead>
                 <tr style={{ backgroundColor: `${primaryColor}15` }}>
-                  <th className="border border-gray-300 px-2 py-2 text-left text-[11px] leading-snug font-semibold break-words hyphens-auto">ITEM</th>
-                  <th className="border border-gray-300 px-2 py-2 text-left text-[11px] leading-snug font-semibold break-words hyphens-auto">DESCRIPCIÓN</th>
-                  <th className="border border-gray-300 px-2 py-2 text-center text-[11px] leading-snug font-semibold break-words hyphens-auto">DISPONIBILIDAD</th>
-                  <th className="border border-gray-300 px-2 py-2 text-center text-[11px] leading-snug font-semibold break-words hyphens-auto">GARANTÍA</th>
-                  <th className="border border-gray-300 px-2 py-2 text-center text-[11px] leading-snug font-semibold break-words hyphens-auto">CANT.</th>
-                  <th className="border border-gray-300 px-2 py-2 text-right text-[11px] leading-snug font-semibold break-words hyphens-auto">PRECIO UNIT.</th>
-                  <th className="border border-gray-300 px-2 py-2 text-center text-[11px] leading-snug font-semibold break-words hyphens-auto">IVA %</th>
-                  <th className="border border-gray-300 px-2 py-2 text-right text-[11px] leading-snug font-semibold break-words hyphens-auto">TOTAL</th>
+                  <th className="border border-gray-300 px-2 py-2 text-center text-[10px] leading-tight font-semibold whitespace-nowrap align-middle">ITEM</th>
+                  <th className="border border-gray-300 px-2 py-2 text-left text-[10px] leading-tight font-semibold whitespace-nowrap align-middle">DESCRIPCIÓN</th>
+                  <th className="border border-gray-300 px-2 py-2 text-center text-[10px] leading-tight font-semibold whitespace-nowrap align-middle">DISPONIBILIDAD</th>
+                  <th className="border border-gray-300 px-2 py-2 text-center text-[10px] leading-tight font-semibold whitespace-nowrap align-middle">GARANTÍA</th>
+                  <th className="border border-gray-300 px-2 py-2 text-center text-[10px] leading-tight font-semibold whitespace-nowrap align-middle">CANT.</th>
+                  <th className="border border-gray-300 pl-2 pr-3 py-2 text-right text-[10px] leading-tight font-semibold whitespace-nowrap align-middle">PRECIO UNIT.</th>
+                  <th className="border border-gray-300 px-2 py-2 text-center text-[10px] leading-tight font-semibold whitespace-nowrap align-middle">IVA %</th>
+                  <th className="border border-gray-300 pl-2 pr-3 py-2 text-right text-[10px] leading-tight font-semibold whitespace-nowrap align-middle">TOTAL</th>
                 </tr>
               </thead>
               <tbody>
@@ -150,9 +150,9 @@ const QuotationFormats: React.FC<QuotationFormatProps> = ({
                     <td className="border border-gray-300 px-2 py-2 text-center text-xs align-top">{product.availability || "Inmediata"}</td>
                     <td className="border border-gray-300 px-2 py-2 text-center text-xs align-top">{product.warranty || "1 año"}</td>
                     <td className="border border-gray-300 px-2 py-2 text-center text-xs align-top">{product.quantity}</td>
-                    <td className="border border-gray-300 pl-2 pr-3 py-2 text-right text-xs tabular-nums tracking-tight align-top">{formatCurrency(product.unit_price)}</td>
+                    <td className="border border-gray-300 pl-2 pr-4 py-2 text-right text-xs tabular-nums tracking-tight align-top">{formatCurrency(product.unit_price)}</td>
                     <td className="border border-gray-300 px-2 py-2 text-center text-xs align-top">{product.iva_percentage}%</td>
-                    <td className="border border-gray-300 pl-2 pr-3 py-2 text-right text-xs font-semibold tabular-nums tracking-tight align-top">{formatCurrency(product.total)}</td>
+                    <td className="border border-gray-300 pl-2 pr-4 py-2 text-right text-xs font-semibold tabular-nums tracking-tight align-top">{formatCurrency(product.total)}</td>
                   </tr>
                 ))}
               </tbody>
