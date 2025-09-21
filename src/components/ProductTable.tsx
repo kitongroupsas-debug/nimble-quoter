@@ -169,10 +169,54 @@ const ProductTable: React.FC<ProductTableProps> = ({
         <Label className="text-sm font-medium mb-2 block">
           Seleccionar Producto del Catálogo
         </Label>
+        <div className="mb-2 text-xs text-muted-foreground">
+          {productsCatalog.length > 0 
+            ? `${productsCatalog.length} productos disponibles en el catálogo`
+            : 'No hay productos en el catálogo'
+          }
+        </div>
         {productsCatalog.length === 0 ? (
           <div className="text-center py-4 text-muted-foreground">
             <p>No hay productos en el catálogo.</p>
             <p className="text-sm">Crea productos primero para poder seleccionarlos aquí.</p>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="mt-2"
+              onClick={async () => {
+                const newCatalogProduct: Product = {
+                  description: 'Nuevo producto de ejemplo',
+                  unit_price: 100000,
+                  iva_percentage: 19,
+                  quantity: 1,
+                  subtotal: 100000,
+                  iva_amount: 19000,
+                  total: 119000,
+                  availability: 'Inmediata',
+                  warranty: '1 año'
+                };
+                try {
+                  const result = await saveProductCatalog(newCatalogProduct);
+                  if (result) {
+                    toast({
+                      title: "Producto creado",
+                      description: "Producto de ejemplo añadido al catálogo.",
+                    });
+                  }
+                } catch (error) {
+                  console.error('Error creating example product:', error);
+                  toast({
+                    title: "Error",
+                    description: "No se pudo crear el producto de ejemplo.",
+                    variant: "destructive",
+                  });
+                }
+              }}
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Crear Producto de Ejemplo
+            </Button>
           </div>
         ) : (
         <ProductSelector

@@ -15,6 +15,8 @@ import QuotationFormats from './QuotationFormats';
 import QuotationsList from './QuotationsList';
 import { useToast } from '@/hooks/use-toast';
 import { useSupabaseData, Company, Customer, Product, Quotation } from '@/hooks/useSupabaseData';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
 import html2pdf from 'html2pdf.js';
 
 // Interfaces are now imported from useSupabaseData hook
@@ -22,6 +24,7 @@ import html2pdf from 'html2pdf.js';
 const QuotationApp = () => {
   const { toast } = useToast();
   const printRef = useRef<HTMLDivElement>(null);
+  const { user } = useAuth();
   const { 
     loading, 
     companies,
@@ -631,6 +634,35 @@ const QuotationApp = () => {
             >
               <Save className="w-5 h-5 mr-2" />
               {saving ? "Guardando..." : "Guardar Cotización"}
+            </Button>
+            <Button 
+              onClick={async () => {
+                console.log('=== DEBUG INFO ===');
+                console.log('User:', user?.id);
+                console.log('Products Catalog:', productsCatalog);
+                console.log('Companies:', companies);
+                console.log('Customers:', customers);
+                console.log('Quotations:', quotations);
+                
+                // Check database directly
+                const { data: allProducts, error } = await supabase
+                  .from('products')
+                  .select('*')
+                  .eq('user_id', user?.id || '');
+                
+                console.log('All products in DB:', allProducts);
+                console.log('DB Error:', error);
+                
+                toast({
+                  title: "Debug Info",
+                  description: `Catálogo: ${productsCatalog.length} productos. Ver consola para detalles.`,
+                });
+              }}
+              variant="outline"
+              size="sm"
+              className="bg-yellow-100 hover:bg-yellow-200"
+            >
+              🐛 Debug
             </Button>
           </div>
         </div>

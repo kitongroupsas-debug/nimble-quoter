@@ -234,6 +234,8 @@ export const useSupabaseData = () => {
   const loadProductsCatalog = async () => {
     if (!user) return;
     
+    console.log('Loading products catalog for user:', user.id);
+    
     const { data, error } = await supabase
       .from('products')
       .select('*')
@@ -406,6 +408,8 @@ export const useSupabaseData = () => {
   };
 
   const loadQuotationProducts = async (quotationId: string) => {
+    console.log('Loading products for quotation:', quotationId);
+    
     const { data, error } = await supabase
       .from('products')
       .select('*')
@@ -413,6 +417,7 @@ export const useSupabaseData = () => {
       .order('created_at', { ascending: true });
 
     if (error) {
+      console.error('Error loading quotation products:', error);
       toast({
         title: "Error",
         description: "Error al cargar los productos",
@@ -421,6 +426,7 @@ export const useSupabaseData = () => {
       return [];
     }
 
+    console.log('Quotation products loaded:', data);
     return data || [];
   };
 
