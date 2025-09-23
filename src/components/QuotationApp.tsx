@@ -13,6 +13,7 @@ import ProductTable from './ProductTable';
 import QuotationPreview from './QuotationPreview';
 import QuotationFormats from './QuotationFormats';
 import QuotationsList from './QuotationsList';
+import ProductCatalogManager from './ProductCatalogManager';
 import { useToast } from '@/hooks/use-toast';
 import { useSupabaseData, Company, Customer, Product, Quotation } from '@/hooks/useSupabaseData';
 import { supabase } from '@/integrations/supabase/client';
@@ -668,10 +669,14 @@ const QuotationApp = () => {
         </div>
 
         <Tabs defaultValue="create" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 max-w-2xl mx-auto">
+          <TabsList className="grid w-full grid-cols-5 max-w-3xl mx-auto">
             <TabsTrigger value="quotations" className="flex items-center gap-2">
               <FolderOpen className="w-4 h-4" />
               Cotizaciones
+            </TabsTrigger>
+            <TabsTrigger value="catalog" className="flex items-center gap-2">
+              <Settings className="w-4 h-4" />
+              Catálogo
             </TabsTrigger>
             <TabsTrigger value="create" className="flex items-center gap-2">
               <Settings className="w-4 h-4" />
@@ -694,6 +699,19 @@ const QuotationApp = () => {
                 <QuotationsList
                   quotations={quotations}
                   onLoadQuotation={handleLoadQuotation}
+                  loading={loading}
+                />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="catalog">
+            <Card className="shadow-lg">
+              <CardContent className="p-6">
+                <ProductCatalogManager
+                  products={productsCatalog}
+                  onSaveProduct={saveProductCatalog}
+                  uploadImage={uploadImage}
                   loading={loading}
                 />
               </CardContent>
